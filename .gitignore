@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+Dokument Persiapan/
+docs/
+.agent/
+
+# Nuxt & Nitro build outputs
+.nuxt/
+.output/
+dist/
+
+# Environment files and credentials (CRITICAL)
+.env
+.env.*
+!.env.example
+
+# Raw preparation docs (contain credentials from test accounts)
+Dokument Persiapan/
+
+# Testing and QA artifacts
+qa-artifacts/
+playwright-report/
+test-results/
+tests/
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+*.local
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

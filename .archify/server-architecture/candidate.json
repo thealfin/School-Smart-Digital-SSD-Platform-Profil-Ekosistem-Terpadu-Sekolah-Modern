@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "School Smart Digital - Enterprise System & Server Architecture",
+    "output": "server-architecture.html",
+    "quality_profile": "standard"
+  },
+  "components": [
+    { "id": "client", "type": "external", "label": "Nuxt 4 Client", "sublabel": "Vue 3 / Tailwind v4 / ISR", "pos": [40, 240], "size": [150, 60] },
+    { "id": "nitro_gw", "type": "backend", "label": "Nitro Gateway", "sublabel": "H3 Engine :3000 / Security Headers", "pos": [270, 240], "size": [160, 60] },
+    { "id": "sec_mw", "type": "security", "label": "Auth & RBAC Guard", "sublabel": "nuxt-auth-utils / Scrypt / CSRF", "pos": [510, 140], "size": [160, 60], "tag": "OWASP ASVS" },
+    { "id": "api_admin", "type": "backend", "label": "Admin CMS Handlers", "sublabel": "/api/admin/* (Leads, News, Services)", "pos": [750, 140], "size": [160, 60] },
+    { "id": "api_public", "type": "backend", "label": "Public API Handlers", "sublabel": "/api/content, news, gallery, leads", "pos": [750, 340], "size": [160, 60] },
+    { "id": "drizzle_orm", "type": "backend", "label": "Drizzle ORM Engine", "sublabel": "@ssd/db / Type-Safe SQL", "pos": [990, 240], "size": [160, 60] },
+    { "id": "cache", "type": "database", "label": "Nitro Storage Cache", "sublabel": "Memory/KV Cache with ISR TTL", "pos": [990, 420], "size": [160, 60] },
+    { "id": "neon_pg", "type": "database", "label": "Neon Serverless Postgres", "sublabel": "PostgreSQL 17 HTTP Driver", "pos": [1230, 240], "size": [160, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Nuxt 4 Nitro Server Boundary (server/)", "wraps": ["nitro_gw", "sec_mw", "api_admin", "api_public", "drizzle_orm", "cache"] },
+    { "kind": "security-group", "label": "Protected Administrative & RBAC Zone", "wraps": ["sec_mw", "api_admin"] }
+  ],
+  "connections": [
+    { "id": "req-to-nitro", "from": "client", "to": "nitro_gw", "label": "HTTPS", "variant": "emphasis" },
+    { "id": "gw-to-sec", "from": "nitro_gw", "to": "sec_mw", "label": "/admin routes", "labelDy": -20 },
+    { "id": "sec-to-admin", "from": "sec_mw", "to": "api_admin", "label": "authenticated", "variant": "security" },
+    { "id": "gw-to-public", "from": "nitro_gw", "to": "api_public", "label": "public routes", "labelDy": 20 },
+    { "id": "admin-to-orm", "from": "api_admin", "to": "drizzle_orm", "label": "mutations" },
+    { "id": "public-to-orm", "from": "api_public", "to": "drizzle_orm", "label": "queries" },
+    { "id": "orm-to-cache", "from": "drizzle_orm", "to": "cache", "label": "ISR cache TTL", "variant": "dashed", "fromSide": "bottom", "toSide": "top", "labelDy": 24 },
+    { "id": "orm-to-neon", "from": "drizzle_orm", "to": "neon_pg", "label": "HTTP SQL", "labelDy": -20 }
+  ],
+  "cards": [
+    { "dot": "rose", "title": "Keamanan & Kepatuhan", "items": ["OWASP ASVS & CSP worker-src compliant", "Scrypt password hash + Anti-enumeration", "Sealed session cookies via nuxt-auth-utils"] },
+    { "dot": "emerald", "title": "Performa & Keandalan", "items": ["Neon Serverless PostgreSQL 17 HTTP driver", "ISR 300s cache untuk halaman publik", "Zero-downtime database migration dengan Drizzle"] },
+    { "dot": "cyan", "title": "Arsitektur Modular Monorepo", "items": ["apps/web: Nuxt 4 Frontend & Nitro Backend", "packages/db: Skema, seed & client Drizzle ORM", "packages/shared: Zod contract & type definition"] }
+  ]
+}

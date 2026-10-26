@@ -1,0 +1,11 @@
+--- apps/web/nuxt.config.ts
++++ apps/web/nuxt.config.ts
+@@ -86,5 +86,8 @@
+   nitro: {
+     externals: {
+       inline: ['@ssd/db', '@ssd/shared'],
+     },
++    prerender: {
++      crawlLinks: false,
++    },
+   },

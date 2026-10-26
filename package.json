@@ -1,0 +1,23 @@
+{
+  "name": "ssd-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "preview": "pnpm --filter web preview",
+    "typecheck": "pnpm -r typecheck",
+    "guardrail": "node scripts/guardrail-check.mjs",
+    "db:generate": "pnpm --filter @ssd/db db:generate",
+    "db:migrate": "pnpm --filter @ssd/db db:migrate",
+    "db:push": "pnpm --filter @ssd/db db:push",
+    "db:studio": "pnpm --filter @ssd/db db:studio",
+    "db:seed": "pnpm --filter @ssd/db db:seed",
+    "db:check": "pnpm --filter @ssd/db exec tsx src/check.ts",
+    "db:create-admin": "pnpm --filter @ssd/db create-admin"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  }
+}

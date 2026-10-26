@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <clipPath id="mark-clip">
+      <rect width="400" height="400" rx="32" ry="32" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#mark-clip)">
+    <!-- Cyan Background Block (fills right, bottom, and bottom-left) -->
+    <rect width="400" height="400" fill="#00B4D8" />
+
+    <!-- Navy Top-Left Block -->
+    <!-- Starts at (0,0), goes to (178,0), goes down vertically to (178,90),
+         curves down-left via cubic bezier to (0, 288), closes along left edge (0,0) -->
+    <path d="M 0 0 L 178 0 C 178 70 162 140 118 198 C 82 246 42 276 0 288 Z" fill="#12355B" />
+
+    <!-- White S-curve Negative Space ribbon:
+         From top: x = 178 to 226 (width 48)
+         Down and curves left to exit at left edge: y = 288 to 336 (height 48) -->
+    <path d="M 178 0
+             L 226 0
+             C 226 80 206 160 156 226
+             C 114 282 66 318 0 336
+             L 0 288
+             C 42 276 82 246 118 198
+             C 162 140 178 70 178 0 Z" fill="#FFFFFF" />
+  </g>
+</svg>

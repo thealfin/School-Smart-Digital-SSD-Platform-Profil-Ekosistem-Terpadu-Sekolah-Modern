@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "3a573d3a-4ce2-496f-8524-19b3f5358aa7",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "D:\\All Project Website\\Web School Smart Digital\\.archify\\server-architecture\\candidate.json",
+  "output": "D:\\All Project Website\\Web School Smart Digital\\.archify\\server-architecture\\server-architecture.html",
+  "specification": {
+    "sha256": "e5e41c7d5ff2e999e486bd838154d6f9ce539c4ff1c3e290d79ff21bafadbd0f",
+    "bytes": 3413
+  },
+  "artifact": {
+    "sha256": "165d92ac9a14b21cfb5f73a2051d758448352d524a703e076fd1e42b5e3ba427",
+    "bytes": 762181
+  }
+}
