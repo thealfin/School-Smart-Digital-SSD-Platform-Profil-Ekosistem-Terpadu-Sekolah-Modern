@@ -687,13 +687,13 @@ export const comparisonRows: ComparisonRow[] = [
   {
     topic: 'Satu yayasan menaungi banyak unit',
     typicalSolution: 'Satu sekolah terkunci dalam satu akun kaku; yayasan harus membuat login terpisah untuk tiap jenjang.',
-    ssdSolution: 'Arsitektur multi-unit sejak rancangan awal (SD · SMP · SMA · Ekstrakurikuler · Asrama / Boarding School); keuangan dan pelaporan dapat digabung atau dipisah sesuai kebijakan yayasan.',
+    ssdSolution: 'Arsitektur multi-unit sejak rancangan awal (mulai dari TK, SD/MI, SMP/MTS, SMA/SMK/MA, Ekstrakulikuler, dan Boarding School/Asrama); keuangan dan pelaporan dapat digabung atau dipisah sesuai kebijakan yayasan.',
     orderIndex: 1,
   },
   {
-    topic: 'Kombinasi pesantren dan sekolah formal',
-    typicalSolution: 'Hanya mengakomodasi sekolah umum jam kerja, atau hanya pesantren tradisional tanpa kurikulum formal.',
-    ssdSolution: 'Modul komprehensif mengelola asrama, tahfidz, kitab kuning, pembina kamar, berdampingan dengan kurikulum akademik formal.',
+    topic: 'Kombinasi Boarding School/Asrama dan sekolah formal',
+    typicalSolution: 'Hanya mengakomodasi sekolah umum jam kerja, atau hanya asrama tradisional tanpa kurikulum formal.',
+    ssdSolution: 'Modul komprehensif mengelola Boarding School/Asrama, pembinaan karakter, pembina kamar, dan Ekstrakulikuler berdampingan dengan kurikulum akademik formal.',
     orderIndex: 2,
   },
   {
@@ -749,7 +749,7 @@ export const faqs: FaqItem[] = [
   },
   {
     question: 'Apakah cocok untuk yayasan dengan banyak unit?',
-    answer: 'Sangat cocok. SSD dirancang multi-unit sejak awal: satu yayasan dapat mengelola unit SD, SMP, SMA, Ekstrakurikuler, dan Asrama / Boarding School dengan pembukuan keuangan yang fleksibel (bisa dipisah per unit atau dikonsolidasikan ke yayasan).',
+    answer: 'Sangat cocok. SSD dirancang multi-unit sejak awal: satu yayasan dapat mengelola unit mulai dari TK, SD/MI, SMP/MTS, SMA/SMK/MA, Ekstrakulikuler, dan Boarding School/Asrama dengan pembukuan keuangan yang fleksibel (bisa dipisah per unit atau dikonsolidasikan ke yayasan).',
     category: 'umum',
     orderIndex: 2,
   },
@@ -813,7 +813,7 @@ export const testimonials: TestimonialItem[] = [
     name: 'Dr. Ir. H. Muhammad Ridwan',
     roleTitle: 'Ketua Yayasan',
     organization: 'Yayasan Pendidikan Darul Hikmah',
-    content: 'Sebagai pengelola yayasan dengan unit SD, SMP, SMA, dan asrama, arsitektur satu data SSD adalah jawaban tepat. Pembukuan tiap unit rapi, hak akses terisolasi ketat, dan konsolidasi keuangan yayasan sangat transparan.',
+    content: 'Sebagai pengelola yayasan dengan unit TK, SD/MI, SMP/MTS, SMA/SMK/MA, Ekstrakulikuler, dan Boarding School/Asrama, arsitektur satu data SSD adalah jawaban tepat. Pembukuan tiap unit rapi, hak akses terisolasi ketat, dan konsolidasi keuangan yayasan sangat transparan.',
     avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
     rating: 5,
     isVerified: true,

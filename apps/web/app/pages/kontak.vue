@@ -201,68 +201,86 @@ async function handleFeedbackSubmit() {
             </form>
           </div>
 
-          <!-- Right Column: Office & Hotline Contacts -->
-          <div class="lg:col-span-5 space-y-6 reveal-right">
-            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-5">
-              <h3 class="text-base font-bold text-navy-900 font-display">Kontor Operasional & Hotline</h3>
+          <!-- Right Column: Jam Layanan & Kantor SSD + Google Maps (Vertical Composition) -->
+          <div class="lg:col-span-5 reveal-right">
+            <div class="rounded-3xl bg-gradient-to-br from-navy-950 via-navy-900 to-navy-950 text-white p-6 sm:p-8 border border-cyan-500/30 shadow-2xl relative overflow-hidden flex flex-col justify-between gap-6 h-full">
+              <!-- Ambient Cyan Glow -->
+              <div class="absolute -top-24 -right-24 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
 
-              <div class="space-y-4 text-xs font-body">
-                <div class="flex items-start gap-3">
-                  <span class="material-symbols-rounded text-cyan-600 text-lg mt-0.5">location_on</span>
-                  <div>
-                    <strong class="block text-slate-900 font-semibold mb-0.5">PT Digital Teknologi Perkasa:</strong>
-                    <p class="text-slate-600 leading-relaxed">
-                      Bandar Lampung, Lampung, Indonesia
-                    </p>
-                  </div>
+              <!-- Top Part: Redaksi Jam Layanan & Kantor SSD -->
+              <div class="space-y-5 relative z-10">
+                <div>
+                  <span class="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest block mb-2">
+                    OPERASIONAL &amp; KANTOR PUSAT
+                  </span>
+                  <h3 class="text-2xl font-extrabold font-display text-white tracking-tight">
+                    Jam Layanan &amp; Kantor SSD
+                  </h3>
+                  <p class="text-xs sm:text-sm text-navy-100/80 mt-2 font-body leading-relaxed">
+                    Tim konsultan dan teknisi School Smart Digital siap melayani konsultasi implementasi, demonstrasi sistem, serta koordinasi bimbingan teknis sekolah.
+                  </p>
                 </div>
 
-                <div class="flex items-start gap-3">
-                  <span class="material-symbols-rounded text-cyan-600 text-lg mt-0.5">chat</span>
-                  <div>
-                    <strong class="block text-slate-900 font-semibold mb-0.5">WhatsApp Konsultan Resmi:</strong>
-                    <a
-                      href="https://wa.me/6285839845284?text=Halo%20School%20Smart%20Digital,%20saya%20ingin%20berkonsultasi"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-cyan-600 hover:text-cyan-700 font-medium font-mono"
-                    >
-                      +62 858-3984-5284
-                    </a>
+                <!-- Box Jam Kerja -->
+                <div class="rounded-2xl bg-navy-900/90 border border-cyan-400/30 p-4 sm:p-5 space-y-2.5 shadow-inner">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+                      <span class="material-symbols-rounded text-xl" aria-hidden="true">schedule</span>
+                    </div>
+                    <div>
+                      <p class="text-[11px] font-mono uppercase tracking-wider text-cyan-300">WAKTU OPERASIONAL</p>
+                      <p class="text-sm sm:text-base font-bold text-white font-display">Senin - Jumat: 09.00 - 16.00 WIB</p>
+                    </div>
                   </div>
+                  <p class="text-xs text-navy-200/70 border-t border-navy-800 pt-2">
+                    Sabtu, Minggu &amp; Libur Nasional: Tutup
+                  </p>
                 </div>
 
-                <div class="flex items-start gap-3">
-                  <span class="material-symbols-rounded text-cyan-600 text-lg mt-0.5">mail</span>
-                  <div>
-                    <strong class="block text-slate-900 font-semibold mb-0.5">Email Korespondensi:</strong>
-                    <a
-                      href="mailto:halo@schoolsmartdigital.com"
-                      class="text-cyan-600 hover:text-cyan-700 font-medium"
-                    >
-                      halo@schoolsmartdigital.com
-                    </a>
-                  </div>
+                <!-- Alamat Fisik -->
+                <div class="flex items-start gap-3 text-xs sm:text-sm text-navy-100/90">
+                  <span class="material-symbols-rounded text-cyan-400 text-xl shrink-0 mt-0.5" aria-hidden="true">location_on</span>
+                  <span class="leading-relaxed">Perum Graha Madu Pesona Blok C No.31, Bandar Lampung</span>
                 </div>
 
-                <div class="flex items-start gap-3">
-                  <span class="material-symbols-rounded text-cyan-600 text-lg mt-0.5">schedule</span>
-                  <div>
-                    <strong class="block text-slate-900 font-semibold mb-0.5">Jam Kerja Support:</strong>
-                    <p class="text-slate-600 font-mono text-[11px]">
-                      Senin – Jumat: 08.00 – 17.00 WIB
-                    </p>
-                  </div>
+                <!-- Quick Buttons -->
+                <div class="flex flex-wrap gap-3 pt-1">
+                  <a
+                    href="https://www.google.com/maps?ll=-5.361284,105.270792&amp;z=15&amp;t=m&amp;hl=id&amp;gl=US&amp;mapclient=embed&amp;q=Perum+Graha+Madu+Pesona+Bandar+Lampung"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-navy-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md"
+                  >
+                    <span>Buka Google Maps</span>
+                  </a>
+                  <a
+                    href="https://wa.me/6285839845284?text=Halo%20tim%20SSD,%20saya%20ingin%20berkonsultasi%20mengenai%20School%20Smart%20Digital."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs border border-white/20 transition-all"
+                  >
+                    <WhatsAppIcon class="w-4 h-4 text-cyan-400" />
+                    <span>Hubungi WhatsApp</span>
+                  </a>
                 </div>
               </div>
-            </div>
 
-            <div class="rounded-3xl bg-navy-900 text-white p-6 sm:p-8 border border-navy-800 shadow-md">
-              <span class="text-[10px] font-mono text-cyan-400 uppercase tracking-widest block mb-1">JAMINAN INTEGRITAS</span>
-              <h4 class="text-base font-bold font-display mb-2">Perlindungan Kerahasiaan Data Sekolah</h4>
-              <p class="text-xs text-navy-100 font-body leading-relaxed">
-                Seluruh data konsultasi dan identitas sekolah dijaga ketat sesuai UU Perlindungan Data Pribadi (UU PDP). Tidak ada data yang dibagikan ke pihak ketiga tanpa izin tertulis.
-              </p>
+              <!-- Bottom Part: Section Maps -->
+              <div class="relative z-10 pt-1">
+                <div class="rounded-2xl overflow-hidden border-2 border-cyan-500/30 shadow-2xl bg-navy-900 w-full h-[250px] sm:h-[280px]">
+                  <iframe
+                    src="https://maps.google.com/maps?q=Perum+Graha+Madu+Pesona+Bandar+Lampung&amp;t=&amp;z=15&amp;ie=UTF8&amp;iwloc=&amp;output=embed"
+                    width="100%"
+                    height="100%"
+                    style="border:0;"
+                    allowfullscreen
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    class="w-full h-full object-cover"
+                    title="Peta Lokasi Kantor School Smart Digital"
+                  ></iframe>
+                </div>
+              </div>
             </div>
           </div>
         </div>

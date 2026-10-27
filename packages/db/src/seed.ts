@@ -2,7 +2,7 @@ import { config } from 'dotenv'
 import { fileURLToPath } from 'node:url'
 config({ path: fileURLToPath(new URL('../../../.env', import.meta.url)) })
 config()
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { createDb, type Db } from './index'
 import * as schema from './schema'
 import {
@@ -29,6 +29,23 @@ export async function seed(dbInstance?: Db): Promise<void> {
 
   const db = dbInstance || createDb(connectionString!)
   console.log('🌱 Starting idempotent database seed...')
+
+  // Ensure schema columns for galleries & news_articles exist on Neon PostgreSQL
+  await db.execute(sql`
+    ALTER TABLE "galleries"
+      ADD COLUMN IF NOT EXISTS "media_type" text NOT NULL DEFAULT 'image',
+      ADD COLUMN IF NOT EXISTS "source_url" text NOT NULL DEFAULT '',
+      ADD COLUMN IF NOT EXISTS "thumbnail_url" text;
+  `)
+  await db.execute(sql`
+    UPDATE "galleries"
+    SET "source_url" = "image_url"
+    WHERE "source_url" = '' OR "source_url" IS NULL;
+  `)
+  await db.execute(sql`
+    ALTER TABLE "news_articles"
+      ADD COLUMN IF NOT EXISTS "meta" jsonb DEFAULT '{}'::jsonb;
+  `)
 
   // 1. Seed Site Settings
   console.log('  -> Seeding site_settings...')
@@ -288,59 +305,115 @@ export async function seed(dbInstance?: Db): Promise<void> {
   // 10. Seed Galleries
   console.log('  -> Seeding galleries...')
   await db.delete(schema.galleries)
+
+  let tiktokAutoThumb = 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80'
+  try {
+    const oembedRes = await fetch('https://www.tiktok.com/oembed?url=https://www.tiktok.com/@schoolsmartdigital/video/7700126040416406836')
+    if (oembedRes.ok) {
+      const oembedJson = (await oembedRes.json()) as { thumbnail_url?: string }
+      if (oembedJson?.thumbnail_url) {
+        tiktokAutoThumb = oembedJson.thumbnail_url
+      }
+    }
+  } catch {
+    // Use fallback thumbnail if oEmbed is unreachable
+  }
+
   const initialGalleries = [
+    {
+      title: 'Transformasi Ekosistem Digital Sekolah Bersama School Smart Digital (TikTok)',
+      category: 'kegiatan',
+      mediaType: 'tiktok',
+      sourceUrl: 'https://www.tiktok.com/@schoolsmartdigital/video/7700126040416406836?_r=1&_t=ZS-9ArrTSlSgrw',
+      thumbnailUrl: tiktokAutoThumb,
+      imageUrl: tiktokAutoThumb,
+      description: 'Cuplikan dokumentasi resmi TikTok @schoolsmartdigital mengenai penerapan ekosistem pintar manajemen sekolah modern.',
+      location: 'School Smart Digital Official',
+      orderIndex: 0,
+      isPublished: true,
+    },
+    {
+      title: 'Liputan Kegiatan & Implementasi Lapangan SSD (Instagram Reels)',
+      category: 'bimtek',
+      mediaType: 'instagram',
+      sourceUrl: 'https://www.instagram.com/reel/De9N5uDp5JZ/?vrfl=MWNmdm1zODF2eDY4cg==',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80',
+      description: 'Dokumentasi video pendek Instagram Reels kegiatan pendampingan dan digitalisasi sekolah mitra SSD.',
+      location: 'Sekolah Mitra SSD',
+      orderIndex: 1,
+      isPublished: true,
+    },
     {
       title: 'Bimbingan Teknis & Pelatihan Operator Sekolah SSD',
       category: 'bimtek',
+      mediaType: 'image',
+      sourceUrl: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80',
       imageUrl: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80',
       description: 'Pendampingan langsung teknis operasional 12 aplikasi School Smart Digital kepada tim administrator dan tata usaha.',
       location: 'Bandar Lampung',
-      orderIndex: 0,
+      orderIndex: 2,
       isPublished: true,
     },
     {
       title: 'Implementasi Pemasangan Smart Turnstile Gate QR Code',
       category: 'hardware',
+      mediaType: 'image',
+      sourceUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80',
       imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80',
       description: 'Instalasi gerbang presensi otomatis presisi tinggi terhubung langsung ke database cloud SSD.',
       location: 'Sekolah Mitra Teladan',
-      orderIndex: 1,
+      orderIndex: 3,
       isPublished: true,
     },
     {
       title: 'Sosialisasi Aplikasi Wali Siswa & Tabungan Sekolah Digital',
       category: 'sosialisasi',
+      mediaType: 'image',
+      sourceUrl: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=800&q=80',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=800&q=80',
       imageUrl: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=800&q=80',
       description: 'Pertemuan interaktif bersama para wali murid mengenai kemudahan pantauan absensi, nilai, dan tagihan SPP lewat smartphone.',
       location: 'Aula Graha Pendidikan',
-      orderIndex: 2,
+      orderIndex: 4,
       isPublished: true,
     },
     {
       title: 'Rapat Koordinasi Evaluasi Satu Data Sekolah Terpadu',
       category: 'kegiatan',
+      mediaType: 'image',
+      sourceUrl: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=800&q=80',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=800&q=80',
       imageUrl: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=800&q=80',
       description: 'Sesi brainstorming berkala antara tim engineering PT Digital Teknologi Perkasa dan pengurus yayasan pendidikan.',
       location: 'Kantor PT Digital Teknologi Perkasa',
-      orderIndex: 3,
+      orderIndex: 5,
       isPublished: true,
     },
     {
       title: 'Workshop Guru: Asesmen & Raport Digital Modern',
       category: 'pelatihan',
+      mediaType: 'image',
+      sourceUrl: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80',
       imageUrl: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80',
       description: 'Pelatihan pembuatan soal digital, penilaian terpadu, dan otomatisasi cetak lembar raport semester.',
       location: 'Laboratorium Komputer',
-      orderIndex: 4,
+      orderIndex: 6,
       isPublished: true,
     },
     {
       title: 'Simulasi Sistem Konseling Terenkripsi & Buku Saku Disiplin Siswa',
       category: 'pelatihan',
+      mediaType: 'image',
+      sourceUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80',
       imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80',
       description: 'Penerapan kode etik keamanan data pada modul Bimbingan Konseling (BK) untuk privasi maksimal siswa.',
       location: 'Ruang Guru & Konseling',
-      orderIndex: 5,
+      orderIndex: 7,
       isPublished: true,
     },
   ]
@@ -367,7 +440,7 @@ export async function seed(dbInstance?: Db): Promise<void> {
         name: 'Dr. Ir. H. Muhammad Ridwan',
         roleTitle: 'Ketua Yayasan',
         organization: 'Yayasan Pendidikan Darul Hikmah',
-        content: 'Sebagai pengelola yayasan dengan unit SD, SMP, SMA, dan asrama, arsitektur satu data SSD adalah jawaban tepat. Pembukuan tiap unit rapi, hak akses terisolasi ketat, dan konsolidasi keuangan yayasan sangat transparan.',
+        content: 'Sebagai pengelola yayasan dengan unit TK, SD/MI, SMP/MTS, SMA/SMK/MA, Ekstrakulikuler, dan Boarding School/Asrama, arsitektur satu data SSD adalah jawaban tepat. Pembukuan tiap unit rapi, hak akses terisolasi ketat, dan konsolidasi keuangan yayasan sangat transparan.',
         avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
         rating: 5,
         isVerified: true,

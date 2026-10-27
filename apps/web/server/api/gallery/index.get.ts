@@ -2,6 +2,7 @@ import { defineEventHandler, getQuery } from 'h3'
 import { asc, eq, and } from 'drizzle-orm'
 import { schema } from '@ssd/db'
 import { useDb } from '../../utils/db'
+import { detectMediaType, resolveGalleryCardThumbnail } from '../../utils/mediaParser'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
@@ -14,12 +15,27 @@ export default defineEventHandler(async (event) => {
     conditions.push(eq(schema.galleries.category, category))
   }
 
-  const items = await db
+  const rows = await db
     .select()
     .from(schema.galleries)
     .where(and(...conditions))
     .orderBy(asc(schema.galleries.orderIndex), asc(schema.galleries.createdAt))
 
+  const items = rows.map((row) => {
+    const sourceUrl = row.sourceUrl || row.imageUrl
+    const mediaType = detectMediaType(sourceUrl, row.mediaType)
+    const thumbnailUrl = resolveGalleryCardThumbnail({ ...row, sourceUrl, mediaType })
+    return {
+      ...row,
+      mediaType,
+      media_type: mediaType,
+      sourceUrl,
+      source_url: sourceUrl,
+      thumbnailUrl,
+      thumbnail_url: thumbnailUrl,
+      imageUrl: thumbnailUrl || row.imageUrl || sourceUrl,
+    }
+  })
+
   return { items }
 })
-

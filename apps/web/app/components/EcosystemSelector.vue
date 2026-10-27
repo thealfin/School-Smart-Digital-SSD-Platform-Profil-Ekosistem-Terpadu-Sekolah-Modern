@@ -9,6 +9,7 @@ const props = defineProps<{
 
 const ecosystemStore = useEcosystemStore()
 const listContainerEl = ref<HTMLElement | null>(null)
+const pinColEl = ref<HTMLElement | null>(null)
 
 if (props.apps && props.apps.length > 0) {
   ecosystemStore.setApps(props.apps)
@@ -39,6 +40,13 @@ function handleAppSelect(slug: string, index: number) {
   ecosystemStore.setActiveSlug(slug)
   const tabEl = listContainerEl.value?.querySelector(`[data-index="${index}"]`) as HTMLElement | null
   tabEl?.focus()
+  if (import.meta.client && window.innerWidth < 1024 && pinColEl.value) {
+    const rect = pinColEl.value.getBoundingClientRect()
+    if (rect.top < 60) {
+      const targetY = window.scrollY + rect.top - 84
+      window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' })
+    }
+  }
 }
 
 // Synchronize keyboard focus during roving tabindex navigation
@@ -79,7 +87,7 @@ onMounted(() => {
       <!-- 2-Column Catalog Layout -->
       <div class="ecosystem-grid">
         <!-- Left Column: Sticky S-Curve Portal Frame Preview -->
-        <div class="eco-pin-col reveal-left">
+        <div ref="pinColEl" class="eco-pin-col reveal-left">
           <div
             :id="`panel-app-${ecosystemStore.activeApp.slug}`"
             class="eco-portal-frame"
@@ -311,15 +319,17 @@ onMounted(() => {
 .eco-pin-col {
   position: relative;
 }
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .eco-pin-col {
-    position: sticky;
-    top: 64px;
-    z-index: 20;
-    height: 42vh;
+    position: relative;
+    top: auto;
+    z-index: 1;
+    height: auto;
+    min-height: 42vh;
     background: var(--ssd-wall, #f6f9fc);
-    padding-bottom: 0.5rem;
-    overflow-y: auto;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+    overflow: visible;
   }
 }
 @media (min-width: 1024px) {
@@ -333,9 +343,14 @@ onMounted(() => {
 .eco-portal-frame {
   background: #ffffff;
   border: 1px solid var(--ssd-border, #d7e2ec);
-  border-radius: 24px;
+  border-radius: 72px 20px 20px 20px;
   overflow: hidden;
   box-shadow: 0 12px 36px rgba(10, 32, 54, 0.08);
+}
+@media (min-width: 640px) {
+  .eco-portal-frame {
+    border-radius: 120px 24px 24px 24px;
+  }
 }
 @media (min-width: 1024px) {
   .eco-portal-frame {
@@ -345,10 +360,15 @@ onMounted(() => {
 }
 
 .portal-viewport {
-  padding: 1.75rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+}
+@media (min-width: 640px) {
+  .portal-viewport {
+    padding: 1.75rem;
+  }
 }
 
 .viewport-header {

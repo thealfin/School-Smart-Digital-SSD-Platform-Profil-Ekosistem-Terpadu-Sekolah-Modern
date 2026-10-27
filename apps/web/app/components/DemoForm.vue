@@ -33,6 +33,7 @@
             rel="noopener noreferrer"
             class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-semibold text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-900"
           >
+            <WhatsAppIcon class="w-4 h-4 text-cyan-400" />
             <span>Buka WhatsApp Langsung</span>
             <span class="material-symbols-rounded text-base" aria-hidden="true">arrow_forward</span>
           </a>
@@ -66,6 +67,7 @@
           rel="noopener noreferrer"
           class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-navy-900 hover:bg-navy-800 text-white font-semibold text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-900"
         >
+          <WhatsAppIcon class="w-4 h-4 text-cyan-400" />
           <span>Chat via WhatsApp Sekarang</span>
           <span class="material-symbols-rounded text-base" aria-hidden="true">arrow_forward</span>
         </a>
@@ -176,10 +178,10 @@
                 :aria-describedby="fieldErrors.orgType ? 'lead-org-type-error' : undefined"
                 @blur="validateField('orgType')"
               >
-                <option value="sekolah">Sekolah Formal (SD · SMP · SMA)</option>
-                <option value="yayasan">Yayasan Multi-Unit (SD · SMP · SMA · Ekstrakurikuler · Asrama / Boarding)</option>
-                <option value="pondok">Asrama / Boarding School</option>
-                <option value="tpq">Ekstrakurikuler / Pengembangan Bakat</option>
+                <option value="sekolah">Sekolah Formal (TK · SD/MI · SMP/MTS · SMA/SMK/MA)</option>
+                <option value="yayasan">Yayasan Multi-Unit (TK · SD/MI · SMP/MTS · SMA/SMK/MA · Ekstrakulikuler · Boarding School/Asrama)</option>
+                <option value="pondok">Boarding School / Asrama</option>
+                <option value="tpq">Ekstrakulikuler / Pengembangan Bakat</option>
                 <option value="lainnya">Lainnya</option>
               </select>
               <p v-if="fieldErrors.orgType" id="lead-org-type-error" class="mt-1 text-xs text-red-600">
@@ -222,7 +224,7 @@
                 type="number"
                 min="1"
                 max="50"
-                placeholder="cth. 3 (SD, SMP, SMA)"
+                placeholder="cth. 3 (TK, SD/MI, SMP/MTS, Boarding School/Asrama)"
                 :class="inputClass('unitCount')"
                 :aria-invalid="!!fieldErrors.unitCount"
                 :aria-describedby="fieldErrors.unitCount ? 'lead-units-error' : undefined"
@@ -392,38 +394,90 @@
       </form>
     </div>
 
-    <!-- Right Column: WhatsApp Direct & Value Reassurance -->
+    <!-- Right Column: Merged WhatsApp Direct & Office Hotline, Demo Guarantee, Integrity Guarantee -->
     <div class="lg:col-span-5 space-y-6 reveal-right">
-      <!-- Direct WhatsApp Channel Card -->
+      <!-- 1. Top Card: Merged Direct WhatsApp Channel & Kantor Operasional / Hotline -->
       <div class="rounded-3xl bg-gradient-to-br from-navy-950 to-navy-900 text-white p-6 sm:p-8 shadow-card border border-navy-800">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-mono font-medium border border-cyan-400/30 mb-4">
-          <span class="material-symbols-rounded text-sm">chat</span>
-          <span>RESPON LEBIH CEPAT</span>
+          <WhatsAppIcon class="w-3.5 h-3.5 text-cyan-400" />
+          <span>RESPON LEBIH CEPAT &amp; HOTLINE RESMI</span>
         </div>
         <h4 class="text-xl sm:text-2xl font-display font-bold text-white mb-2">
           Ingin Diskusi Langsung?
         </h4>
-        <p class="text-sm text-navy-100/85 font-body leading-relaxed mb-6">
-          Jika yayasan Anda sedang merencanakan anggaran tahun ajaran baru atau ingin konsultasi cepat via pesan, langsung chat dengan konsultan kami.
+        <p class="text-sm text-navy-100/85 font-body leading-relaxed mb-5">
+          Jika yayasan Anda sedang merencanakan anggaran tahun ajaran baru atau ingin konsultasi cepat via pesan, langsung hubungi kantor operasional dan konsultan kami.
         </p>
+
+        <!-- Kantor Operasional & Hotline Details -->
+        <div class="rounded-2xl bg-white/5 border border-white/10 p-4 mb-6 space-y-3.5 text-xs font-body">
+          <div class="text-xs font-bold text-cyan-300 font-display uppercase tracking-wider border-b border-white/10 pb-2">
+            Kantor Operasional &amp; Hotline
+          </div>
+
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-rounded text-cyan-400 text-lg mt-0.5 shrink-0">location_on</span>
+            <div>
+              <strong class="block text-white font-semibold mb-0.5">PT Digital Teknologi Perkasa:</strong>
+              <p class="text-navy-100/80 leading-relaxed">
+                Perum Graha Madu Pesona Blok C No.31, Bandar Lampung, Lampung, Indonesia
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <WhatsAppIcon class="w-4 h-4 text-cyan-400 mt-0.5 shrink-0" />
+            <div>
+              <strong class="block text-white font-semibold mb-0.5">WhatsApp Konsultan Resmi:</strong>
+              <a
+                :href="dynamicWaUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-cyan-400 hover:text-cyan-300 font-medium font-mono"
+              >
+                +62 858-3984-5284
+              </a>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-rounded text-cyan-400 text-lg mt-0.5 shrink-0">mail</span>
+            <div>
+              <strong class="block text-white font-semibold mb-0.5">Email Korespondensi:</strong>
+              <a
+                href="mailto:halo@schoolsmartdigital.com"
+                class="text-cyan-400 hover:text-cyan-300 font-medium break-all"
+              >
+                halo@schoolsmartdigital.com
+              </a>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <span class="material-symbols-rounded text-cyan-400 text-lg mt-0.5 shrink-0">schedule</span>
+            <div>
+              <strong class="block text-white font-semibold mb-0.5">Jam Kerja Support:</strong>
+              <p class="text-navy-100/80 font-mono text-[11px]">
+                Senin - Jumat: 08.00 - 17.00 WIB
+              </p>
+            </div>
+          </div>
+        </div>
 
         <a
           :href="dynamicWaUrl"
           target="_blank"
           rel="noopener noreferrer"
-          class="w-full flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-navy-950 font-semibold text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          class="w-full flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-navy-950 font-semibold text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white shadow-md"
           @click="trackWaClick"
         >
-          <span class="material-symbols-rounded text-xl" aria-hidden="true">chat</span>
+          <WhatsAppIcon class="w-4 h-4 text-navy-950" />
           <span>Chat via WhatsApp Sekarang</span>
         </a>
-        <p class="mt-3 text-center text-xs text-navy-100/60 font-mono">
-          Nomor Resmi: +62 858-3984-5284
-        </p>
       </div>
 
-      <!-- Security & Transparency Checklist -->
-      <div class="rounded-3xl bg-surface border border-navy-100/80 p-6 sm:p-8">
+      <!-- 2. Middle Card: Jaminan Layanan Demo -->
+      <div class="rounded-3xl bg-surface border border-navy-100/80 p-6 sm:p-8 shadow-xs">
         <h5 class="text-base font-display font-bold text-navy-900 mb-4 flex items-center gap-2">
           <span class="material-symbols-rounded text-cyan-700">verified_user</span>
           <span>Jaminan Layanan Demo</span>
@@ -442,6 +496,15 @@
             <span>Perhitungan proposal biaya transparan tanpa biaya tersembunyi.</span>
           </li>
         </ul>
+      </div>
+
+      <!-- 3. Bottom Card: Jaminan Integritas -->
+      <div class="rounded-3xl bg-navy-900 text-white p-6 sm:p-8 border border-navy-800 shadow-md">
+        <span class="text-[10px] font-mono text-cyan-400 uppercase tracking-widest block mb-1">JAMINAN INTEGRITAS</span>
+        <h4 class="text-base font-bold font-display mb-2">Perlindungan Kerahasiaan Data Sekolah</h4>
+        <p class="text-xs text-navy-100 font-body leading-relaxed">
+          Seluruh data konsultasi dan identitas sekolah dijaga ketat sesuai UU Perlindungan Data Pribadi (UU PDP). Tidak ada data yang dibagikan ke pihak ketiga tanpa izin tertulis.
+        </p>
       </div>
     </div>
   </div>

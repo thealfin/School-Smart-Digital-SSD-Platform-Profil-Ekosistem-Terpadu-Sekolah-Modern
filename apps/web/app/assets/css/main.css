@@ -31,9 +31,9 @@
   --color-accent-text: var(--ssd-accent-text);
 
   /* ── Typography Families ── */
-  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Open Sans", ui-sans-serif, system-ui, sans-serif;
   --font-body:    "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-mono:    "Bricolage Grotesque", ui-monospace, SFMono-Regular, monospace;
 
   /* ── Radii ── */
   --radius-sm:     8px;
@@ -131,6 +131,10 @@ body {
   font-family: var(--font-body);
   max-width: 100vw;
   overflow-x: clip;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: auto !important;
 }
 
 /* ── Accessible Focus Rings (WCAG AA) ── */

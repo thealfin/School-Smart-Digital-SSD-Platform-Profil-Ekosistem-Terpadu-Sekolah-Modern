@@ -120,9 +120,10 @@ const content = computed<LandingContent>(() => contentData.value || fallbackCont
               href="https://wa.me/6285839845284?text=Halo%20School%20Smart%20Digital,%20saya%20tertarik%20dengan%20modul%20aplikasi"
               target="_blank"
               rel="noopener noreferrer"
-              class="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm transition-all border border-white/20"
+              class="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm transition-all border border-white/20 inline-flex items-center gap-2"
             >
-              Chat WhatsApp Konsultan
+              <WhatsAppIcon class="w-4 h-4 text-cyan-400" />
+              <span>Chat WhatsApp Konsultan</span>
             </a>
           </div>
         </div>

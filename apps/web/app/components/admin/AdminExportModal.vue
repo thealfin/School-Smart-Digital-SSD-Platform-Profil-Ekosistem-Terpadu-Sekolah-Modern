@@ -35,7 +35,7 @@ watch(
       aria-labelledby="modal-export-title"
       @click.self="emit('close')"
     >
-      <div class="bg-white rounded-2xl max-w-md w-full border border-[var(--ssd-border,#d7e2ec)] shadow-2xl p-6 space-y-5 text-[var(--color-navy-950,#0a2036)]">
+      <div class="bg-white rounded-3xl w-full lg:w-3/4 max-w-4xl border border-[var(--ssd-border,#d7e2ec)] shadow-2xl p-6 sm:p-8 space-y-5 text-[var(--color-navy-950,#0a2036)]">
         <div class="flex items-start justify-between">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-cyan-50 border border-cyan-200 flex items-center justify-center text-[#01A8CF]">

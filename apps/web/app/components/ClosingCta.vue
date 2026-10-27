@@ -62,8 +62,9 @@
                 :href="waQuickUrl"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium text-sm border border-white/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 flex items-center gap-1.5"
+                class="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-medium text-sm border border-white/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 flex items-center gap-2"
               >
+                <WhatsAppIcon class="w-4 h-4 text-cyan-400" />
                 <span>Chat via WhatsApp</span>
                 <span class="material-symbols-rounded text-base" aria-hidden="true">arrow_forward</span>
               </a>

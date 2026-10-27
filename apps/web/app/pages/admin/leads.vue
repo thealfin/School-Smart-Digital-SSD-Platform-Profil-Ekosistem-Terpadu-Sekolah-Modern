@@ -11,7 +11,7 @@ definePageMeta({
 })
 
 useHead({
-  title: 'CRM Lead Admin — School Smart Digital',
+  title: 'CRM Lead Admin - School Smart Digital',
   meta: [
     { name: 'robots', content: 'noindex, nofollow' },
   ],
@@ -191,7 +191,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[var(--ssd-background,#f6f9fc)] text-[var(--color-navy-950,#0a2036)] flex font-body">
+  <div class="h-screen overflow-hidden bg-[var(--ssd-background,#f6f9fc)] text-[var(--color-navy-950,#0a2036)] flex font-body" data-lenis-prevent>
     <!-- Dedicated Admin Sidebar Component -->
     <AdminSidebar
       :user="(user as any)"
@@ -206,9 +206,9 @@ onMounted(() => {
     />
 
     <!-- Right Workspace Column -->
-    <div class="flex-1 flex flex-col min-w-0">
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto" data-lenis-prevent>
       <!-- Top Workspace Header Bar -->
-      <header class="bg-white border-b border-[var(--ssd-border,#d7e2ec)] px-4 sm:px-8 py-3.5 sticky top-0 z-20 flex items-center justify-between gap-4">
+      <header class="bg-white shrink-0 border-b border-[var(--ssd-border,#d7e2ec)] px-4 sm:px-8 py-3.5 sticky top-0 z-20 flex items-center justify-between gap-4">
         <div class="flex items-center gap-3">
           <button
             type="button"

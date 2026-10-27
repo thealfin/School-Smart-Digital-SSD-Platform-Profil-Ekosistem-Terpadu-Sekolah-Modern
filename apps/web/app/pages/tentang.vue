@@ -148,6 +148,7 @@ const content = computed<LandingContent>(() => contentData.value || fallbackCont
                   rel="noopener noreferrer"
                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-xs border border-white/20 transition-all"
                 >
+                  <WhatsAppIcon class="w-4 h-4 text-cyan-400" />
                   <span>Hubungi WhatsApp</span>
                 </a>
               </div>
@@ -184,7 +185,7 @@ const content = computed<LandingContent>(() => contentData.value || fallbackCont
               <span class="text-xs font-mono text-cyan-400 uppercase tracking-widest block mb-1">BADAN HUKUM RESMI & KOMITMEN</span>
               <h2 class="text-2xl font-bold font-display mb-2">PT Digital Teknologi Perkasa</h2>
               <p class="text-xs sm:text-sm text-navy-100 font-body leading-relaxed mb-4">
-                Didirikan dengan visi modernisasi institusi pendidikan dan pesantren di era digital. Memiliki legalitas resmi dan mematuhi seluruh regulasi Kementerian Pendidikan serta UU PDP dalam tata kelola basis data kesiswaan.
+                Didirikan dengan visi modernisasi institusi pendidikan di era digital untuk seluruh unit pendidikan: mulai dari TK, SD/MI, SMP/MTS, SMA/SMK/MA, Ekstrakulikuler, dan Boarding School/Asrama. Memiliki legalitas resmi dan mematuhi seluruh regulasi Kementerian Pendidikan serta UU PDP dalam tata kelola basis data kesiswaan.
               </p>
               <div class="flex flex-wrap gap-4 text-xs font-mono text-cyan-300">
                 <span>Kantor Operasional: Bandar Lampung, Indonesia</span>

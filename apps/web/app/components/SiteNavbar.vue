@@ -298,7 +298,7 @@ onUnmounted(() => {
             <span class="bar bar-2"></span>
             <span class="bar bar-3"></span>
           </div>
-          <span class="hamburger-text">{{ isDrawerOpen ? 'Tutup' : 'Menu' }}</span>
+          <span class="hamburger-text">{{ isDrawerOpen ? 'Tutup' : '' }}</span>
         </button>
       </div>
     </Teleport>
@@ -364,7 +364,7 @@ onUnmounted(() => {
             <div class="drawer-contact-info mt-5 pt-4 border-t border-slate-100 text-xs text-slate-500 space-y-2.5">
               <p class="font-bold text-navy-900 text-sm">PT Digital Teknologi Perkasa</p>
               <p class="flex items-start gap-2">
-                <span class="material-symbols-rounded text-cyan-600 text-sm mt-0.5 shrink-0">call</span>
+                <WhatsAppIcon class="w-4 h-4 text-cyan-600 mt-0.5 shrink-0" />
                 <a href="https://wa.me/6285839845284" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-600 transition-colors font-medium">+62 858-3984-5284</a>
               </p>
               <p class="flex items-start gap-2">

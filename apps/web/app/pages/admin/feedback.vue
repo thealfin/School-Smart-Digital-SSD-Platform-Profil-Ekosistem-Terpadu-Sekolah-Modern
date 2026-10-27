@@ -6,7 +6,7 @@ definePageMeta({
 })
 
 useHead({
-  title: 'Kotak Masuk Pesan — Admin SSD',
+  title: 'Kotak Masuk Pesan - Admin SSD',
 })
 
 const { user, clear: clearSession } = useUserSession()
@@ -59,7 +59,7 @@ async function handleLogout() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50 flex">
+  <div class="h-screen overflow-hidden bg-slate-50 flex" data-lenis-prevent>
     <AdminSidebar
       :user="user"
       :is-open-mobile="isMobileSidebarOpen"
@@ -67,8 +67,8 @@ async function handleLogout() {
       @close-mobile="isMobileSidebarOpen = false"
     />
 
-    <div class="flex-1 flex flex-col min-w-0">
-      <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20">
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto" data-lenis-prevent>
+      <header class="h-16 shrink-0 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20">
         <div class="flex items-center gap-3">
           <button
             type="button"
@@ -141,14 +141,14 @@ async function handleLogout() {
       </main>
     </div>
 
-    <!-- Message Detail Modal -->
+    <!-- Message Detail Modal (3/4 Lebar Admin Panel) -->
     <Teleport to="body">
       <div
         v-if="selectedMessage"
         class="fixed inset-0 z-50 bg-navy-950/70 backdrop-blur-xs flex items-center justify-center p-4"
         @click.self="selectedMessage = null"
       >
-        <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl">
+        <div class="bg-white rounded-3xl w-full lg:w-3/4 max-w-6xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
           <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
             <div>
               <span class="text-[10px] font-mono text-cyan-600 uppercase font-semibold">DETAIL PESAN MASUK</span>

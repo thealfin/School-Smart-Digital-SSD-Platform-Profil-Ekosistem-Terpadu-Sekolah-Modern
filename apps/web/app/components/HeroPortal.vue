@@ -83,24 +83,30 @@ function updateGeometry() {
   // Initial aperture dimensions (w0, h0) matching authentic SSD Logo square-portal proportions
   let w0: number
   let h0: number
-  if (W < 720) {
-    w0 = 0.56 * W
-    h0 = Math.min(0.38 * H, 1.15 * w0)
+  let cy: number
+  if (W < 768) {
+    w0 = 0.42 * W
+    h0 = Math.min(0.22 * H, 1.06 * w0)
+    cy = 0.43 * H
+  } else if (W < 1024) {
+    w0 = 0.36 * W
+    h0 = Math.min(0.25 * H, 1.06 * w0)
+    cy = 0.44 * H
   } else {
     w0 = Math.min(Math.max(0.28 * W, 280), 440)
     h0 = Math.min(0.58 * H, 1.12 * w0)
+    cy = 0.53 * H
   }
 
   // Morph interpolation to full screen
   const w = w0 + (W - w0) * e
   const side = (W - w) / 2
-  const cy = 0.53 * H
   const top = (cy - h0 / 2) * (1 - e)
   const bottom = (H - cy - h0 / 2) * (1 - e)
 
   // Signature S-Curve corner radii inspired by Logo SSD.svg
-  const rTL = (0.44 * w0) * (1 - e)
-  const rOther = 24 * (1 - e)
+  const rTL = (0.48 * w0) * (1 - e)
+  const rOther = 22 * (1 - e)
 
   // Apply clip-path to .media
   if (e >= 0.999) {
@@ -293,7 +299,7 @@ onUnmounted(() => {
               </p> -->
 
               <!-- Checklist Benefit Points -->
-              <div class="hero-benefit-list mt-3 space-y-2">
+              <div class="hero-benefit-list mt-2 lg:mt-3 space-y-2">
                 <div class="benefit-item">
                   <span class="benefit-check">✓</span>
                   <span class="benefit-text">1 Akun Terpadu untuk Yayasan, Kepala Sekolah, Guru &amp; Orang Tua</span>
@@ -303,22 +309,21 @@ onUnmounted(() => {
                   <span class="benefit-text">Real-time Sinkronisasi Tanpa Server Lokal yang Rumit</span>
                 </div>
               </div>
-              <br>
+
               <!-- Bagan warna cyan dan text berwarna navy di sisi kanan text pertama -->
-              <div class="wing-bagan-card wing-bagan-right" aria-hidden="true">
-                <br>
-              <div class="bagan-accent-line"></div>
-              <div class="bagan-body">
-                <div class="bagan-tag-row">
-                  <span class="bagan-status-dot"></span>
-                  <span class="bagan-tag-text">OPERASIONAL</span>
-                </div>
-                <div class="bagan-data-block">
-                  <span class="bagan-title-text">SATU DATA TERPADU</span>
-                  <span class="bagan-desc-text">Kelola seluruh operasional akademik, keuangan SPP terpadu, presensi smart turnstile QR Code, manajemen asrama/boarding school, hingga komunikasi wali santri dalam satu platform cerdas</span>
+              <div class="wing-bagan-card wing-bagan-right mt-2.5 lg:mt-5" aria-hidden="true">
+                <div class="bagan-accent-line"></div>
+                <div class="bagan-body">
+                  <div class="bagan-tag-row">
+                    <span class="bagan-status-dot"></span>
+                    <span class="bagan-tag-text">OPERASIONAL</span>
+                  </div>
+                  <div class="bagan-data-block">
+                    <span class="bagan-title-text">SATU DATA TERPADU</span>
+                    <span class="bagan-desc-text">Kelola seluruh operasional akademik, keuangan SPP terpadu, presensi smart turnstile QR Code, manajemen Boarding School/Asrama, hingga komunikasi wali siswa dalam satu platform cerdas</span>
+                  </div>
                 </div>
               </div>
-            </div>
             </div>
 
             <!--  -->
@@ -353,7 +358,7 @@ onUnmounted(() => {
           </div>
           <div class="fact-item">
             <dt>Arsitektur</dt>
-            <dd>Multi unit :TK · SD · SMP · SMA/SMK · Ekstrakurikuler · Asrama / Boarding School</dd>
+            <dd>Multi-Unit: TK · SD/MI · SMP/MTS · SMA/SMK/MA · Ekstrakulikuler · Boarding School/Asrama</dd>
           </div>
           <div class="fact-item">
             <dt>Transparansi</dt>
@@ -788,7 +793,7 @@ onUnmounted(() => {
 }
 
 .wing-bagan-right {
-  border-right: 4px solid #01a8cf;
+  border-left: 4px solid #01a8cf;
 }
 
 .bagan-accent-line {
@@ -799,11 +804,14 @@ onUnmounted(() => {
   background: #01a8cf;
 }
 .wing-bagan-left .bagan-accent-line { left: 0; }
-.wing-bagan-right .bagan-accent-line { right: 0; }
+.wing-bagan-right .bagan-accent-line { left: 0; }
 
 .bagan-body {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: left;
   gap: 0.35rem;
 }
 
@@ -976,14 +984,19 @@ onUnmounted(() => {
 
 /* Responsive Breakpoints */
 @media (max-width: 1023px) {
+  .portal-type {
+    top: 44%;
+    font-size: clamp(2.75rem, 11vw, 4.5rem);
+  }
+
   .hero-flanks-layer {
     grid-template-columns: 1fr;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    padding: clamp(4.25rem, 8.5vh, 5.25rem) 1rem clamp(1rem, 2.5vh, 1.75rem) 1rem;
-    gap: 0.35rem;
+    padding: clamp(4.5rem, 9vh, 5.5rem) 1.25rem clamp(1.75rem, 3.5vh, 2.5rem) 1.25rem;
+    gap: 0.75rem;
     max-width: 600px;
     height: 100svh;
     max-height: 100svh;
@@ -998,8 +1011,8 @@ onUnmounted(() => {
   .hero-portal-window-slot {
     order: 2;
     flex: 1;
-    min-height: 180px;
-    max-height: 250px;
+    min-height: 200px;
+    max-height: 280px;
     width: 100%;
   }
 
@@ -1012,29 +1025,32 @@ onUnmounted(() => {
   .wing-inner-layout {
     flex-direction: column;
     align-items: stretch;
-    gap: 0.4rem;
-  }
-
-  .wing-bagan-card {
-    padding: 0.4rem 0.75rem;
-    border-radius: 10px;
-  }
-
-  .bagan-body {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
     gap: 0.5rem;
   }
 
+  .wing-bagan-card {
+    padding: 0.65rem 0.85rem;
+    border-radius: 12px;
+    border-left: 4px solid #01a8cf;
+    border-right: 1.5px solid rgba(1, 168, 207, 0.45);
+  }
+
+  .bagan-body {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    gap: 0.35rem;
+    text-align: left;
+  }
+
   .bagan-data-block {
-    text-align: right;
+    text-align: left;
   }
 
   .wing-text-left h1 {
-    font-size: clamp(1.25rem, 4.2vw, 1.65rem);
-    margin: 0.25rem 0;
+    font-size: clamp(1.35rem, 4.5vw, 1.75rem);
+    margin: 0.35rem 0;
   }
 
   .headline-text {
@@ -1047,12 +1063,12 @@ onUnmounted(() => {
   }
 
   .benefit-item {
-    padding: 0.25rem 0.5rem;
+    padding: 0.35rem 0.65rem;
     font-size: clamp(0.68rem, 2.2vw, 0.75rem);
   }
 
   .cta-actions.hero-actions {
-    margin-top: 0.4rem;
+    margin-top: 0.5rem;
     gap: 0.5rem;
   }
 
@@ -1073,10 +1089,11 @@ onUnmounted(() => {
   }
 }
 
-/* Mobile Duo-Color Typography Adjustment for SCHOOL SMART DIGITAL */
+/* Mobile Duo-Color Knockout Typography Adjustment for SCHOOL SMART DIGITAL */
 @media (max-width: 767px) {
   .portal-type {
-    font-size: clamp(2.3rem, 10.5vw, 3.4rem);
+    top: 43%;
+    font-size: clamp(2.55rem, 13vw, 3.8rem);
   }
 
   .portal-type.type-out {
@@ -1088,16 +1105,13 @@ onUnmounted(() => {
   }
 
   .portal-type.type-in {
-    color: #0c3161;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95),
-                 0 0 12px rgba(255, 255, 255, 0.8),
-                 0 0 24px rgba(255, 255, 255, 0.5);
+    color: #ffffff;
+    text-shadow: 0 2px 16px rgba(8, 28, 56, 0.45);
   }
 
   .portal-type.type-in .type-line-digital-in {
-    color: #01a8cf;
-    text-shadow: 0 0 16px rgba(1, 168, 207, 0.75),
-                 0 2px 8px rgba(12, 49, 97, 0.6);
+    color: #2cc6e4;
+    text-shadow: 0 2px 14px rgba(8, 28, 56, 0.5);
   }
 }
 

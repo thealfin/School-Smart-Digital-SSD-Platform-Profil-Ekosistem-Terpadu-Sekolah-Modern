@@ -99,7 +99,7 @@
                 Dikembangkan oleh PT Digital Teknologi Perkasa
               </h2>
               <p class="text-sm text-slate-600 font-body leading-relaxed max-w-2xl">
-                Telah teruji mendampingi puluhan institusi pendidikan dan pesantren di Indonesia dengan integrasi hardware cerdas, standar kepatuhan UU PDP, dan pendampingan bimbingan teknis intensif.
+                Telah teruji mendampingi puluhan institusi pendidikan di Indonesia (mulai dari TK, SD/MI, SMP/MTS, SMA/SMK/MA, Ekstrakulikuler, dan Boarding School/Asrama) dengan integrasi hardware cerdas, standar kepatuhan UU PDP, dan pendampingan bimbingan teknis intensif.
               </p>
               <div class="flex flex-wrap gap-4 text-xs font-mono text-slate-700 pt-2">
                 <span class="flex items-center gap-1.5"><span class="material-symbols-rounded text-cyan-600 text-sm">check_circle</span> Zero Data Silo</span>
@@ -234,9 +234,10 @@
             href="https://wa.me/6285839845284?text=Halo%20School%20Smart%20Digital,%20saya%20ingin%20berkonsultasi%20sistem"
             target="_blank"
             rel="noopener noreferrer"
-            class="px-8 py-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm border border-white/20 transition-all"
+            class="px-8 py-4 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm border border-white/20 transition-all inline-flex items-center gap-2"
           >
-            Chat WhatsApp
+            <WhatsAppIcon class="w-4 h-4 text-cyan-400" />
+            <span>Chat WhatsApp</span>
           </a>
         </div>
       </div>

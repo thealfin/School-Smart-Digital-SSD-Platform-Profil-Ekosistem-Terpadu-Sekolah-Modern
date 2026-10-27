@@ -1,5 +1,8 @@
 <template>
   <div class="min-h-screen bg-background text-primary selection:bg-cyan-500 selection:text-white">
+    <!-- Fullscreen Preloader (Logo Spinner Loader) -->
+    <FullscreenPreloader />
+
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>

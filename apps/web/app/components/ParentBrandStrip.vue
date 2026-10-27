@@ -127,6 +127,7 @@
               rel="noopener noreferrer"
               class="inline-flex items-center gap-2 text-sm font-semibold text-cyan-700 hover:text-navy-900 transition-colors group focus:outline-none focus-visible:ring-2 focus-visible:ring-navy-900 rounded-sm"
             >
+              <WhatsAppIcon class="w-4 h-4 text-cyan-600 group-hover:text-navy-900 transition-colors" />
               <span>Konsultasi WhatsApp Tim Teknis</span>
               <span class="material-symbols-rounded text-base group-hover:translate-x-0.5 transition-transform" aria-hidden="true">
                 arrow_forward

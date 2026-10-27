@@ -246,6 +246,8 @@ onUnmounted(() => {
 
 .ticket-header {
   display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
@@ -276,6 +278,7 @@ onUnmounted(() => {
   border-top: 1px dashed rgba(18, 53, 91, 0.2);
   border-bottom: 1px dashed rgba(18, 53, 91, 0.2);
   margin-bottom: 1.5rem;
+  gap: 0.25rem;
 }
 .route-point {
   display: flex;
@@ -284,11 +287,11 @@ onUnmounted(() => {
 .point-code {
   font-family: var(--font-display, sans-serif);
   font-weight: 800;
-  font-size: 1.125rem;
+  font-size: clamp(0.875rem, 2.8vw, 1.125rem);
   color: var(--color-navy-950, #0a2036);
 }
 .point-sub {
-  font-size: 0.75rem;
+  font-size: clamp(0.6875rem, 2vw, 0.75rem);
   color: var(--ssd-text-secondary, #46607a);
 }
 
@@ -297,7 +300,8 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 1rem;
+  margin: 0 clamp(0.35rem, 1.5vw, 1rem);
+  min-width: 16px;
 }
 .route-dot {
   width: 6px;

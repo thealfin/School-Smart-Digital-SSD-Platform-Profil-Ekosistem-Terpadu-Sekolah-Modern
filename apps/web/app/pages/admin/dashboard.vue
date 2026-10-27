@@ -6,7 +6,7 @@ definePageMeta({
 })
 
 useHead({
-  title: 'Dashboard Admin — School Smart Digital',
+  title: 'Dashboard Admin - School Smart Digital',
 })
 
 const { user, clear: clearSession } = useUserSession()
@@ -35,7 +35,7 @@ async function handleLogout() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50 flex">
+  <div class="h-screen overflow-hidden bg-slate-50 flex" data-lenis-prevent>
     <!-- Admin Sidebar -->
     <AdminSidebar
       :user="user"
@@ -45,9 +45,9 @@ async function handleLogout() {
     />
 
     <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col min-w-0">
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto" data-lenis-prevent>
       <!-- Top Bar -->
-      <header class="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20">
+      <header class="h-16 shrink-0 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20">
         <div class="flex items-center gap-3">
           <button
             type="button"

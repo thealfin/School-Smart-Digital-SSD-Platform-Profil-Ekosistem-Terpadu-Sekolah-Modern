@@ -271,12 +271,12 @@ function handleKeydown(event: KeyboardEvent, index: number) {
             </div>
 
             <!-- Right Column: Tactile Tilted Paper Card (5 cols) -->
-            <div class="lg:col-span-5 relative mt-6 lg:mt-0 reveal-right">
+            <div class="lg:col-span-5 relative mt-8 lg:mt-0 reveal-right">
               <div
                 class="card-tilted bg-[#F1F6FB] border border-[#D7E2EC] rounded-2xl p-6 sm:p-8 shadow-[0_30px_60px_rgba(10,32,54,0.18)] relative transition-transform duration-300 hover:rotate-0"
               >
                 <!-- Circular Stamp in Corner -->
-                <div class="absolute -top-4 -right-4 stamp rotate-8 bg-white/95 shadow-md">
+                <div class="absolute -top-3 right-2 sm:-top-4 sm:-right-4 stamp rotate-8 bg-white/95 shadow-md">
                   {{ tab.stampText }}
                 </div>
 

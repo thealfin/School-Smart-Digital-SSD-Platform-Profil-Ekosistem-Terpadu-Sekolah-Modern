@@ -135,21 +135,56 @@
                 Punya Pertanyaan Spesifik Tentang Sekolah Anda?
               </h3>
               <p class="mt-3 text-xs sm:text-sm text-cyan-100 font-body leading-relaxed">
-                Struktur yayasan, integrasi smart turnstile gate QR Code, hingga sistem bagi hasil koperasi bisa dikonsultasikan langsung bersama tim ahli kami.
+                Struktur yayasan, integrasi smart gate QR Code, hingga sistem bagi hasil koperasi atau mitra usaha bisa dikonsultasikan langsung bersama tim ahli kami.
               </p>
             </div>
 
-            <!-- Talent Silhouette / Portal Center Graphic -->
-            <div class="relative z-10 my-8 py-4 flex items-center justify-center">
-              <div class="relative w-36 h-36 sm:w-44 sm:h-44 rounded-full border-2 border-dashed border-cyan-300/40 p-2 flex items-center justify-center">
-                <div class="w-full h-full rounded-full bg-white/10 backdrop-blur-sm border border-cyan-400/50 flex flex-col items-center justify-center text-center p-4">
-                  <span class="material-symbols-rounded text-4xl text-cyan-300 mb-1">support_agent</span>
-                  <span class="text-[11px] font-mono uppercase tracking-wider text-white font-bold">KONSULTAN AHLI</span>
-                  <span class="text-[10px] text-cyan-200">Siap Dampingi</span>
+            <!-- Talent Portrait 9:16 Portal Viewport Showcase -->
+            <div class="relative z-10 my-6 py-2 flex items-center justify-center">
+              <div class="relative group">
+                <!-- Outer Subtle Dashed Frame Accent -->
+                <div
+                  class="absolute -inset-2 rounded-[28px] rounded-tl-[84px] border border-dashed border-cyan-300/45 pointer-events-none"
+                  aria-hidden="true"
+                />
+
+                <!-- 9:16 Portrait Rectangular S-Curve Portal Card -->
+                <div
+                  class="faq-talent-portal relative w-48 sm:w-56 aspect-[9/16] rounded-[22px] rounded-tl-[76px] overflow-hidden border-2 border-white/40 shadow-[0_20px_50px_rgba(6,24,48,0.45)] bg-gradient-to-b from-[#2cc6e4] via-[#01a8cf] to-[#0082a3] flex items-end justify-center"
+                >
+                  <!-- White Tapered Wave Lines Pattern (Matching Footer Pattern) -->
+                  <div
+                    class="absolute inset-0 pointer-events-none faq-talent-tapered-lines"
+                    aria-hidden="true"
+                  />
+
+                  <!-- Soft Radial Highlight Behind Talent -->
+                  <div
+                    class="absolute top-1/4 left-1/2 -translate-x-1/2 w-36 h-36 rounded-full bg-white/25 blur-2xl pointer-events-none"
+                    aria-hidden="true"
+                  />
+
+                  <!-- SSD Talent Cutout Image -->
+                  <img
+                    src="/media/Manda%20FAQ.webp"
+                    alt="Konsultan School Smart Digital siap menjawab pertanyaan Anda"
+                    class="relative z-10 w-full h-[94%] object-contain object-bottom select-none drop-shadow-[0_12px_24px_rgba(8,34,69,0.35)] transition-transform duration-500 group-hover:scale-[1.03]"
+                    loading="lazy"
+                  />
+
+                  <!-- Bottom Glass Badge Label -->
+                  <div class="absolute bottom-3 inset-x-3 z-20 rounded-xl bg-navy-950/80 backdrop-blur-md border border-white/20 px-3 py-2 flex items-center justify-between gap-2 shadow-lg">
+                    <div class="text-left">
+                      <span class="block text-[10px] font-mono uppercase tracking-wider text-cyan-300 font-bold leading-tight">
+                        KONSULTAN AHLI SSD
+                      </span>
+                      <span class="block text-[11px] font-body text-white/95 font-medium leading-tight">
+                        Siap Menjawab &amp; Mendampingi
+                      </span>
+                    </div>
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] shrink-0" />
+                  </div>
                 </div>
-                <!-- Orbiting Pulse Indicator -->
-                <div class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-cyan-400 animate-ping" />
-                <div class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-cyan-400" />
               </div>
             </div>
 
@@ -243,6 +278,10 @@ useHead({
 </script>
 
 <style scoped>
+.faq-talent-tapered-lines {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='20' viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21.184 20c.357-.13.72-.264 1.088-.402l1.768-.661C33.64 15.347 39.647 14 50 14c10.271 0 15.362 1.222 24.629 4.928.955.383 1.869.74 2.75 1.072h6.225c-2.51-.735-5.197-1.575-8.244-2.653C65.666 14.195 59.554 11.968 50 11.968c-9.643 0-16.196 2.37-25.766 5.672-3.238 1.117-6.07 1.962-8.683 2.682h5.633zM28.452 8.35c3.06-.47 6.326-.743 9.77-.743 17.585 0 28.528 7.058 35.15 13.393h6.233c-7.77-7.61-20.252-14.393-41.383-14.393-4.717 0-9.124.443-13.155 1.144L28.452 8.35z' fill='%23ffffff' fill-opacity='0.22' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
 /* Progressive enhancement: when JavaScript is disabled, render answers visible */
 @media (scripting: none) {
   .faq-panel {

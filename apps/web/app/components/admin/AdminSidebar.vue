@@ -55,13 +55,14 @@ function isActive(path: string) {
   <!-- Sidebar Panel -->
   <aside
     aria-label="Navigasi Admin Panel SSD"
+    data-lenis-prevent
     :class="[
       'fixed lg:sticky top-0 left-0 z-40 h-screen w-72 bg-[#0C3161] text-white flex flex-col border-r border-white/10 transition-transform duration-200 ease-out shrink-0',
       isOpenMobile ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
     ]"
   >
     <!-- Brand Header with Authentic Logo SSD -->
-    <div class="px-5 py-5 border-b border-white/10 flex items-center justify-between">
+    <div class="px-5 py-5 border-b border-white/10 flex items-center justify-between shrink-0">
       <NuxtLink to="/admin/dashboard" class="inline-flex items-center focus:outline-none">
         <BrandLogo variant="light" size="sm" subtitle="Admin CMS Panel" />
       </NuxtLink>
@@ -77,7 +78,7 @@ function isActive(path: string) {
     </div>
 
     <!-- Navigation List -->
-    <div class="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+    <div class="flex-1 min-h-0 overflow-y-auto px-3 py-4 space-y-6" data-lenis-prevent>
       <!-- Section 1: Main Admin Menu -->
       <div>
         <p class="px-3 mb-2 text-[11px] font-mono uppercase tracking-wider text-cyan-300/80 font-semibold">

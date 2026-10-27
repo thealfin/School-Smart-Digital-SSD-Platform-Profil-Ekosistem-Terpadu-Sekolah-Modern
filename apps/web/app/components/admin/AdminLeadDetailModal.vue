@@ -35,13 +35,14 @@ function getStatusBadge(status: string) {
   <Teleport to="body">
     <div
       v-if="isOpen && lead"
+      data-lenis-prevent
       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/60 backdrop-blur-xs"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-lead-title"
       @click.self="emit('close')"
     >
-      <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-[var(--ssd-border,#d7e2ec)] shadow-2xl p-6 sm:p-8 space-y-6 text-[var(--color-navy-950,#0a2036)]">
+      <div class="bg-white rounded-3xl w-full lg:w-3/4 max-w-6xl max-h-[90vh] overflow-y-auto border border-[var(--ssd-border,#d7e2ec)] shadow-2xl p-6 sm:p-8 space-y-6 text-[var(--color-navy-950,#0a2036)]">
         <!-- Modal Header -->
         <div class="flex items-start justify-between border-b border-[var(--ssd-border,#d7e2ec)] pb-4">
           <div>

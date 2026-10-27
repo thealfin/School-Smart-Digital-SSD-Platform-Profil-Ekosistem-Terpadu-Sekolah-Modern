@@ -265,6 +265,7 @@ export const newsArticles = pgTable(
     category: text('category').notNull().default('Berita'),
     coverImageUrl: text('cover_image_url'),
     author: text('author').notNull().default('Tim SSD'),
+    meta: jsonb('meta').$type<Record<string, any>>().default({}),
     isPublished: boolean('is_published').notNull().default(true),
     publishedAt: timestamp('published_at', { withTimezone: true }).defaultNow(),
     ...stamps,
@@ -281,7 +282,10 @@ export const galleries = pgTable(
   {
     id: id(),
     title: text('title').notNull(),
-    category: text('category').notNull().default('bimtek'), // bimtek, pelatihan, hardware, kegiatan
+    category: text('category').notNull().default('bimtek'), // bimtek, pelatihan, hardware, sosialisasi, kegiatan
+    mediaType: text('media_type').notNull().default('image'), // 'image' | 'youtube' | 'tiktok' | 'instagram'
+    sourceUrl: text('source_url').notNull().default(''),
+    thumbnailUrl: text('thumbnail_url'),
     imageUrl: text('image_url').notNull(),
     description: text('description'),
     location: text('location'),

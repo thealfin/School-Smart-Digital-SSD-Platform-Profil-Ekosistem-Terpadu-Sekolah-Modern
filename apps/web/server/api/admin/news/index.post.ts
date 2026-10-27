@@ -20,10 +20,28 @@ export default defineEventHandler(async (event) => {
   const slug = rawSlug || `berita-${Date.now()}`
   const summary = body.summary ? String(body.summary).trim() : null
   const content = body.content ? String(body.content).trim() : ''
-  const category = body.category ? String(body.category).trim() : 'Berita'
-  const coverImageUrl = body.coverImageUrl ? String(body.coverImageUrl).trim() : null
-  const author = body.author ? String(body.author).trim() : 'Tim SSD'
-  const isPublished = Boolean(body.isPublished ?? true)
+  const meta = body.meta && typeof body.meta === 'object' ? body.meta : {}
+
+  const category =
+    body.category
+      ? String(body.category).trim()
+      : meta.category_name
+        ? String(meta.category_name).trim()
+        : Array.isArray(meta.category) && meta.category[0]
+          ? String(meta.category[0]).trim()
+          : 'Bimtek'
+
+  const coverImageUrl =
+    body.coverImageUrl || body.image_url || body.featured_image
+      ? String(body.coverImageUrl || body.image_url || body.featured_image).trim()
+      : null
+
+  const author =
+    body.author || meta.author_name
+      ? String(body.author || meta.author_name).trim()
+      : 'Tim SSD'
+
+  const isPublished = Boolean(body.isPublished ?? body.is_published ?? true)
 
   const db = useDb()
   const [created] = await db
@@ -36,6 +54,7 @@ export default defineEventHandler(async (event) => {
       category,
       coverImageUrl,
       author,
+      meta,
       isPublished,
       publishedAt: isPublished ? new Date() : null,
     })
@@ -43,4 +62,3 @@ export default defineEventHandler(async (event) => {
 
   return { article: created }
 })
-

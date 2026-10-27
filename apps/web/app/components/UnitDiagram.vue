@@ -10,27 +10,27 @@ export interface UnitSegment {
 
 const segments: UnitSegment[] = [
   {
-    title: 'Sekolah Umum',
-    subtitle: 'SD · SMP · SMA Swasta Modern',
+    title: 'Sekolah Formal',
+    subtitle: 'TK · SD/MI · SMP/MTS · SMA/SMK/MA',
     description: 'Solusi terpadu presensi gerbang, keuangan SPP, aplikasi orang tua (Womi), dan otomasi raport.',
     iconName: 'school',
   },
   {
     title: 'Yayasan Multi-Unit',
     subtitle: 'Holding Pendidikan Terpadu',
-    description: 'Satu akun pengelola untuk mengonsolidasikan SD, SMP, SMA, ekstrakurikuler, dan asrama dengan pembukuan gabung atau terpisah.',
+    description: 'Satu akun pengelola untuk mengonsolidasikan TK, SD/MI, SMP/MTS, SMA/SMK/MA, Ekstrakulikuler, dan Boarding School/Asrama dengan pembukuan gabung atau terpisah.',
     iconName: 'account_tree',
   },
   {
-    title: 'Ekstrakurikuler & Keagamaan',
-    subtitle: 'Klub, TPQ & Kegiatan Terpadu',
-    description: 'Sistem presensi bakat minat, keagamaan/shalat, dan kegiatan ekstrakurikuler siswa yang terpantau real-time.',
+    title: 'Ekstrakulikuler',
+    subtitle: 'Klub, Bakat Minat & Kegiatan Terpadu',
+    description: 'Sistem presensi bakat minat, klub olahraga/seni, keagamaan, dan kegiatan ekstrakulikuler siswa yang terpantau real-time.',
     iconName: 'menu_book',
   },
   {
-    title: 'Asrama / Boarding School',
-    subtitle: 'Pesantren Modern & Boarding',
-    description: 'Kombinasi pengelolaan hunian kamar, tahfidz/kitab, kedisiplinan malam, izin pesiar santri, dan kantin digital.',
+    title: 'Boarding School / Asrama',
+    subtitle: 'Hunian Asrama & Boarding Modern',
+    description: 'Kombinasi pengelolaan hunian kamar, pembinaan karakter, kedisiplinan malam, izin keluar asrama, dan kantin digital.',
     iconName: 'mosque',
     linkUrl: 'https://pesantrensmartdigital.com',
     linkText: 'Kunjungi Pesantren Smart Digital →',
@@ -71,60 +71,68 @@ const segments: UnitSegment[] = [
         <div class="flex justify-center mb-6">
           <div class="w-full max-w-md bg-navy-900 text-white rounded-2xl p-5 text-center shadow-lg border border-navy-950">
             <span class="label-mono text-[10px] text-cyan-400 block mb-1">KANTOR PUSAT YAYASAN</span>
-            <h4 class="font-display font-bold text-lg text-white">Yayasan Pendidikan & Pesantren</h4>
+            <h4 class="font-display font-bold text-lg text-white">Yayasan Pendidikan Multi-Unit</h4>
             <p class="text-xs text-navy-200 mt-1 font-mono">Master Data · Kebijakan Terpusat · Konsolidasi Keuangan</p>
           </div>
         </div>
 
         <!-- Branching Connectors (Desktop Horizontal / Mobile Vertical) -->
         <div class="hidden md:flex justify-center items-center py-2">
-          <div class="w-3/4 h-8 border-t-2 border-l-2 border-r-2 border-dashed border-navy-300 rounded-t-xl relative">
+          <div class="w-4/5 h-8 border-t-2 border-l-2 border-r-2 border-dashed border-navy-300 rounded-t-xl relative">
             <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-cyan-500 text-white flex items-center justify-center text-xs">
               ↓
             </div>
           </div>
         </div>
 
-        <!-- Node 2: 5 Institutional Units (SD, SMP, SMA, Ekstrakurikuler, Asrama / Boarding School) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+        <!-- Node 2: 6 Institutional Units (TK, SD/MI, SMP/MTS, SMA/SMK/MA, Ekstrakulikuler, Boarding School/Asrama) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           
-          <div class="bg-white rounded-2xl border border-border p-5 text-center shadow-sm">
+          <div class="bg-white rounded-2xl border border-border p-4 sm:p-5 text-center shadow-sm">
+            <div class="w-8 h-8 rounded-lg bg-navy-100 text-navy-900 font-display font-bold flex items-center justify-center mx-auto mb-2 text-sm">
+              TK
+            </div>
+            <h5 class="font-display font-bold text-navy-950 text-sm sm:text-base">Unit TK</h5>
+            <p class="text-xs text-navy-700 mt-1">Jurnal Harian, Portofolio Tumbuh Kembang, Info Wali</p>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-border p-4 sm:p-5 text-center shadow-sm">
             <div class="w-8 h-8 rounded-lg bg-navy-100 text-navy-900 font-display font-bold flex items-center justify-center mx-auto mb-2 text-sm">
               SD
             </div>
-            <h5 class="font-display font-bold text-navy-950 text-base">Unit SD / MI</h5>
+            <h5 class="font-display font-bold text-navy-950 text-sm sm:text-base">Unit SD / MI</h5>
             <p class="text-xs text-navy-700 mt-1">Presensi Tap QR, SPP Bulanan, Raport Digital</p>
           </div>
 
-          <div class="bg-white rounded-2xl border border-border p-5 text-center shadow-sm">
+          <div class="bg-white rounded-2xl border border-border p-4 sm:p-5 text-center shadow-sm">
             <div class="w-8 h-8 rounded-lg bg-navy-100 text-navy-900 font-display font-bold flex items-center justify-center mx-auto mb-2 text-sm">
               SMP
             </div>
-            <h5 class="font-display font-bold text-navy-950 text-base">Unit SMP / MTs</h5>
+            <h5 class="font-display font-bold text-navy-950 text-sm sm:text-base">Unit SMP / MTS</h5>
             <p class="text-xs text-navy-700 mt-1">Bimbingan Konseling, Disiplin Poin, Absen HP</p>
           </div>
 
-          <div class="bg-white rounded-2xl border border-border p-5 text-center shadow-sm">
+          <div class="bg-white rounded-2xl border border-border p-4 sm:p-5 text-center shadow-sm">
             <div class="w-8 h-8 rounded-lg bg-navy-100 text-navy-900 font-display font-bold flex items-center justify-center mx-auto mb-2 text-sm">
               SMA
             </div>
-            <h5 class="font-display font-bold text-navy-950 text-base">Unit SMA / MA</h5>
+            <h5 class="font-display font-bold text-navy-950 text-sm sm:text-base">SMA / SMK / MA</h5>
             <p class="text-xs text-navy-700 mt-1">Raport Otomatis, Peminatan, Kartu QR Pintar</p>
           </div>
 
-          <div class="bg-white rounded-2xl border border-border p-5 text-center shadow-sm">
+          <div class="bg-white rounded-2xl border border-border p-4 sm:p-5 text-center shadow-sm">
             <div class="w-8 h-8 rounded-lg bg-navy-100 text-navy-900 font-display font-bold flex items-center justify-center mx-auto mb-2 text-sm">
               EKS
             </div>
-            <h5 class="font-display font-bold text-navy-950 text-base">Ekstrakurikuler</h5>
+            <h5 class="font-display font-bold text-navy-950 text-sm sm:text-base">Ekstrakulikuler</h5>
             <p class="text-xs text-navy-700 mt-1">Absensi Klub, Bakat Minat, Prestasi Siswa</p>
           </div>
 
-          <div class="bg-white rounded-2xl border border-border p-5 text-center shadow-sm">
+          <div class="bg-white rounded-2xl border border-border p-4 sm:p-5 text-center shadow-sm">
             <div class="w-8 h-8 rounded-lg bg-navy-100 text-navy-900 font-display font-bold flex items-center justify-center mx-auto mb-2 text-sm">
               ASR
             </div>
-            <h5 class="font-display font-bold text-navy-950 text-base">Asrama / Boarding</h5>
+            <h5 class="font-display font-bold text-navy-950 text-sm sm:text-base">Boarding School / Asrama</h5>
             <p class="text-xs text-navy-700 mt-1">Izin Gerbang, E-Kantin, Disiplin Hunian</p>
           </div>
 

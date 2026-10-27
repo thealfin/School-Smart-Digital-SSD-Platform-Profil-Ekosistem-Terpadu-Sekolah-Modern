@@ -17,11 +17,38 @@ export default defineEventHandler(async (event) => {
   }
 
   if (body.title !== undefined) updateData.title = String(body.title).trim()
-  if (body.summary !== undefined) updateData.summary = String(body.summary).trim()
+  if (body.slug !== undefined && String(body.slug).trim()) {
+    updateData.slug = String(body.slug)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '')
+  }
+  if (body.summary !== undefined) updateData.summary = String(body.summary).trim() || null
   if (body.content !== undefined) updateData.content = String(body.content).trim()
-  if (body.category !== undefined) updateData.category = String(body.category).trim()
-  if (body.coverImageUrl !== undefined) updateData.coverImageUrl = String(body.coverImageUrl).trim()
-  if (body.isPublished !== undefined) updateData.isPublished = Boolean(body.isPublished)
+
+  const meta = body.meta && typeof body.meta === 'object' ? body.meta : undefined
+  if (meta !== undefined) {
+    updateData.meta = meta
+  }
+
+  if (body.category !== undefined) {
+    updateData.category = String(body.category).trim()
+  } else if (meta?.category_name) {
+    updateData.category = String(meta.category_name).trim()
+  }
+
+  if (body.coverImageUrl !== undefined || body.image_url !== undefined || body.featured_image !== undefined) {
+    const rawCover = body.coverImageUrl ?? body.image_url ?? body.featured_image ?? ''
+    updateData.coverImageUrl = String(rawCover).trim() || null
+  }
+
+  if (body.author !== undefined || meta?.author_name !== undefined) {
+    updateData.author = String(body.author || meta?.author_name || 'Tim SSD').trim()
+  }
+
+  if (body.isPublished !== undefined || body.is_published !== undefined) {
+    updateData.isPublished = Boolean(body.isPublished ?? body.is_published)
+  }
 
   const [updated] = await db
     .update(schema.newsArticles)
@@ -31,4 +58,3 @@ export default defineEventHandler(async (event) => {
 
   return { article: updated }
 })
-
