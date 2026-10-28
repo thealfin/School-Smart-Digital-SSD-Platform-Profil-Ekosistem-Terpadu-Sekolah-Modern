@@ -47,8 +47,26 @@ const isModalOpen = ref(false)
 const isEditing = ref(false)
 const editingId = ref<string | null>(null)
 const isSubmitting = ref(false)
+const isPurgingCache = ref(false)
+const cacheNotice = ref('')
 const isLogoutModalOpen = ref(false)
 const isMobileSidebarOpen = ref(false)
+
+async function handleManualPurgeCache() {
+  isPurgingCache.value = true
+  cacheNotice.value = ''
+  try {
+    await $fetch('/api/admin/purge-cache', { method: 'POST' })
+    cacheNotice.value = 'Cache beranda dan testimoni berhasil dibersihkan!'
+    setTimeout(() => {
+      cacheNotice.value = ''
+    }, 4000)
+  } catch (err: any) {
+    alert(err?.data?.message || 'Gagal membersihkan cache.')
+  } finally {
+    isPurgingCache.value = false
+  }
+}
 
 const form = reactive({
   name: '',
@@ -112,6 +130,10 @@ async function handleSave() {
       })
     }
     isModalOpen.value = false
+    cacheNotice.value = 'Data berhasil disimpan & cache beranda otomatis dibersihkan!'
+    setTimeout(() => {
+      if (cacheNotice.value.includes('disimpan')) cacheNotice.value = ''
+    }, 4000)
     await refresh()
   } catch (err: any) {
     alert(err?.data?.message || 'Gagal menyimpan testimoni.')
@@ -124,6 +146,10 @@ async function handleDelete(id: string, name: string) {
   if (!confirm(`Apakah Anda yakin ingin menghapus testimoni dari "${name}"?`)) return
   try {
     await $fetch(`/api/admin/testimonials/${id}`, { method: 'DELETE' })
+    cacheNotice.value = 'Testimoni dihapus & cache beranda otomatis dibersihkan!'
+    setTimeout(() => {
+      if (cacheNotice.value.includes('dihapus')) cacheNotice.value = ''
+    }, 4000)
     await refresh()
   } catch (err: any) {
     alert(err?.data?.message || 'Gagal menghapus testimoni.')
@@ -136,6 +162,10 @@ async function togglePublish(item: any) {
       method: 'PUT',
       body: { isPublished: !item.isPublished },
     })
+    cacheNotice.value = 'Status publikasi diperbarui & cache beranda dibersihkan!'
+    setTimeout(() => {
+      if (cacheNotice.value.includes('publikasi')) cacheNotice.value = ''
+    }, 4000)
     await refresh()
   } catch (err: any) {
     alert(err?.data?.message || 'Gagal memperbarui status publikasi.')
@@ -177,17 +207,56 @@ async function handleLogout() {
           </div>
         </div>
 
-        <button
-          type="button"
-          class="px-4 py-2 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs font-semibold shadow-xs flex items-center gap-1.5 transition"
-          @click="openAddModal"
-        >
-          <span class="material-symbols-rounded text-base">add</span>
-          <span>Tambah Testimoni</span>
-        </button>
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            :disabled="isPurgingCache"
+            class="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition disabled:opacity-50 cursor-pointer"
+            title="Bersihkan cache ISR halaman beranda & API testimoni"
+            @click="handleManualPurgeCache"
+          >
+            <span class="material-symbols-rounded text-base text-cyan-600" :class="{ 'animate-spin': isPurgingCache }">cached</span>
+            <span class="hidden sm:inline">{{ isPurgingCache ? 'Membersihkan...' : 'Bersihkan Cache' }}</span>
+          </button>
+
+          <button
+            type="button"
+            class="px-4 py-2 rounded-xl bg-navy-900 hover:bg-navy-800 text-white text-xs font-semibold shadow-xs flex items-center gap-1.5 transition cursor-pointer"
+            @click="openAddModal"
+          >
+            <span class="material-symbols-rounded text-base">add</span>
+            <span>Tambah Testimoni</span>
+          </button>
+        </div>
       </header>
 
       <main class="flex-1 p-6 space-y-6">
+        <!-- Live Auto-Purge Cache Notification Banner -->
+        <transition
+          enter-active-class="transition duration-200 ease-out"
+          enter-from-class="transform -translate-y-2 opacity-0"
+          enter-to-class="transform translate-y-0 opacity-100"
+          leave-active-class="transition duration-150 ease-in"
+          leave-from-class="transform translate-y-0 opacity-100"
+          leave-to-class="transform -translate-y-2 opacity-0"
+        >
+          <div
+            v-if="cacheNotice"
+            class="p-3.5 rounded-xl bg-cyan-50 border border-cyan-200 text-cyan-900 text-xs font-medium flex items-center justify-between gap-2 shadow-xs"
+          >
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-rounded text-cyan-600 text-base">check_circle</span>
+              <span>{{ cacheNotice }}</span>
+            </div>
+            <button
+              type="button"
+              class="text-cyan-600 hover:text-cyan-900 text-xs p-1"
+              @click="cacheNotice = ''"
+            >
+              ✕
+            </button>
+          </div>
+        </transition>
         
         <!-- Summary Stats Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">

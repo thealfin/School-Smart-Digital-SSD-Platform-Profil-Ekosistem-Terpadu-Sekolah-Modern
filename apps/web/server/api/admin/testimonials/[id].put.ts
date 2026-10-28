@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm'
 import { schema } from '@ssd/db'
 import { useDb } from '../../../utils/db'
 import { requireAdmin } from '../../../utils/auth'
+import { purgeAppCache } from '../../../utils/cachePurge'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
@@ -34,6 +35,9 @@ export default defineEventHandler(async (event) => {
     .set(updateData)
     .where(eq(schema.testimonials.id, id))
     .returning()
+
+  // Auto purge homepage ISR cache
+  await purgeAppCache()
 
   return { testimonial: updated }
 })

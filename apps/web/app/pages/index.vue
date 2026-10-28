@@ -130,6 +130,9 @@
     <!-- 6. Client Testimonials Section (Pimpinan Sekolah & Yayasan Mitra) -->
     <TestimonialSection id="testimoni" />
 
+    <!-- 6B. Ringkasan Galeri & Video Dokumentasi (Sebelum FAQ) -->
+    <HomeGallerySection id="galeri-ringkasan" />
+
     <!-- 7. Accessible FAQ Accordion (9 FAQs + SSR JSON-LD ala PSD) -->
     <FaqAccordion
       id="faq"

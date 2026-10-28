@@ -32,17 +32,17 @@ const testimonialList = computed(() => {
       <!-- Section Header -->
       <div class="text-center max-w-3xl mx-auto mb-16 reveal">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-100 text-cyan-800 text-xs font-mono font-semibold mb-3 border border-cyan-200">
-          <span class="material-symbols-rounded text-sm">verified</span>
-          <span>ULASAN &amp; TESTIMONI KLIEN</span>
+          <span class="material-symbols-rounded text-sm">handshake</span>
+          <span>KATA MITRA</span>
         </div>
         <h2
           id="testimonial-heading"
           class="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-navy-950 tracking-tight leading-tight"
         >
-          Dipercaya oleh Pimpinan Sekolah &amp; Yayasan
+          Pengalaman Sekolah dan Yayasan Mitra
         </h2>
         <p class="mt-4 text-base sm:text-lg text-slate-600 font-body leading-relaxed">
-          Simak pengalaman nyata kepala sekolah, ketua yayasan, dan wakasek kesiswaan yang telah mentransformasikan operasional sekolahnya bersama School Smart Digital.
+          Dari kepala sekolah, ketua yayasan, dan wakasek kesiswaan yang telah mentransformasikan operasional sekolahnya bersama School Smart Digital.
         </p>
       </div>
 
@@ -74,7 +74,7 @@ const testimonialList = computed(() => {
                 class="inline-flex items-center gap-1 text-[11px] font-mono font-semibold text-cyan-800 bg-cyan-50 px-2.5 py-1 rounded-full border border-cyan-200"
               >
                 <span class="material-symbols-rounded text-xs text-cyan-600">verified</span>
-                <span>Terverifikasi SSD</span>
+                <span>Mitra SSD</span>
               </span>
             </div>
 

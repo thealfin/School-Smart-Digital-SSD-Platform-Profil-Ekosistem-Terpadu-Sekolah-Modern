@@ -454,9 +454,13 @@ export async function seed(dbInstance?: Db): Promise<void> {
 
   await db.insert(schema.galleries).values(initialGalleries)
 
-  // 10. Seed Initial Client Testimonials (if empty)
-  const existingTestimonials = await db.select().from(schema.testimonials).limit(1)
-  if (existingTestimonials.length === 0) {
+  // 10. Seed Initial Client Testimonials (Ensure standard partner reviews exist)
+  const existingTestimonials = await db.select().from(schema.testimonials)
+  const isDummyOnly = existingTestimonials.length === 1 && existingTestimonials[0].name.toLowerCase() === 'test'
+  if (existingTestimonials.length === 0 || isDummyOnly) {
+    if (isDummyOnly) {
+      await db.delete(schema.testimonials)
+    }
     console.log('  -> Seeding client testimonials...')
     await db.insert(schema.testimonials).values([
       {
@@ -467,6 +471,7 @@ export async function seed(dbInstance?: Db): Promise<void> {
         avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
         rating: 5,
         isVerified: true,
+        consentAt: new Date(),
         isPublished: true,
         orderIndex: 1,
       },
@@ -478,6 +483,7 @@ export async function seed(dbInstance?: Db): Promise<void> {
         avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
         rating: 5,
         isVerified: true,
+        consentAt: new Date(),
         isPublished: true,
         orderIndex: 2,
       },
@@ -489,6 +495,7 @@ export async function seed(dbInstance?: Db): Promise<void> {
         avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
         rating: 5,
         isVerified: true,
+        consentAt: new Date(),
         isPublished: true,
         orderIndex: 3,
       },
