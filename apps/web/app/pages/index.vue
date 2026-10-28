@@ -269,7 +269,9 @@ const recentArticles = computed(() => newsData.value?.articles || [])
 
 // SSR SEO Meta
 useSeoMeta({
-  title: 'School Smart Digital (SSD) — Sistem Operasi untuk Sekolah Anda',
-  description: 'Sistem operasi terpadu sekolah modern oleh PT Digital Teknologi Perkasa. Menghubungkan presensi smart gate, buku induk, keuangan SPP, hingga portal wali.',
+  title: 'School Smart Digital || Sistem Operasional Sekolah Satu Data ||',
+  description: 'Back Office, SPP, Presensi Siswa, Verifikasi antar-jemput Siswa, asrama, dan portal wali murid dalam satu data. Aplikasi sekolah dari PT Digital Teknologi Perkasa. Jadwalkan demo.',
+  ogTitle: 'School Smart Digital || Sistem Operasional Sekolah Satu Data ||',
+  ogDescription: 'Back Office, SPP, Presensi Siswa, Verifikasi antar-jemput Siswa, asrama, dan portal wali murid dalam satu data. Aplikasi sekolah dari PT Digital Teknologi Perkasa. Jadwalkan demo.',
 })
 </script>

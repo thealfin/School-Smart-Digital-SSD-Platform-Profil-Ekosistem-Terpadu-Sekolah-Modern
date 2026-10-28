@@ -2,14 +2,11 @@
 import { computed } from 'vue'
 import { fallbackContent, type LandingContent } from '@ssd/shared'
 
-useHead({
-  title: 'Katalog Fitur & 12 Modul Ekosistem — School Smart Digital',
-  meta: [
-    {
-      name: 'description',
-      content: 'Katalog lengkap 12 aplikasi terintegrasi School Smart Digital: presensi smart turnstile & gate berbasis Kartu QR Code Scanner, alur 9 langkah, BK terenkripsi, multi-unit yayasan, dan keamanan UU PDP.',
-    },
-  ],
+useSeoMeta({
+  title: 'Fitur & 12 Aplikasi || School Smart Digital ||',
+  description: 'Katalog 12 aplikasi SSD: presensi gerbang QR, SPP, konseling, rapor, multi-unit yayasan, dan keamanan data yang mengacu pada UU PDP.',
+  ogTitle: 'Fitur & 12 Aplikasi || School Smart Digital ||',
+  ogDescription: 'Katalog 12 aplikasi SSD: presensi gerbang QR, SPP, konseling, rapor, multi-unit yayasan, dan keamanan data yang mengacu pada UU PDP.',
 })
 
 const { data: contentData } = await useAsyncData<LandingContent>(

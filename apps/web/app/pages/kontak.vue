@@ -2,14 +2,11 @@
 import { reactive, ref, computed } from 'vue'
 import { fallbackContent, type LandingContent } from '@ssd/shared'
 
-useHead({
-  title: 'Hubungi Kami & Jadwalkan Konsultasi — School Smart Digital',
-  meta: [
-    {
-      name: 'description',
-      content: 'Jadwalkan demo sistem operasi terpadu School Smart Digital atau hubungi konsultan kami untuk pertanyaan, penawaran harga, dan bimbingan teknis.',
-    },
-  ],
+useSeoMeta({
+  title: 'Jadwalkan Demo & Hubungi Kami || School Smart Digital ||',
+  description: 'Jadwalkan demo SSD daring atau di sekolah Anda, atau hubungi konsultan kami untuk pertanyaan dan estimasi biaya.',
+  ogTitle: 'Jadwalkan Demo & Hubungi Kami || School Smart Digital ||',
+  ogDescription: 'Jadwalkan demo SSD daring atau di sekolah Anda, atau hubungi konsultan kami untuk pertanyaan dan estimasi biaya.',
 })
 
 const { data: contentData } = await useAsyncData<LandingContent>(

@@ -1,14 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-useHead({
-  title: 'Berita & Warta Edukasi - School Smart Digital',
-  meta: [
-    {
-      name: 'description',
-      content: 'Kabar terkini seputar transformasi digital sekolah, liputan bimbingan teknis SSD, dan wawasan pengelolaan institusi pendidikan modern.',
-    },
-  ],
+useSeoMeta({
+  title: 'Berita & Wawasan || School Smart Digital ||',
+  description: 'Kabar implementasi, liputan bimtek SSD, dan wawasan pengelolaan sekolah modern.',
+  ogTitle: 'Berita & Wawasan || School Smart Digital ||',
+  ogDescription: 'Kabar implementasi, liputan bimtek SSD, dan wawasan pengelolaan sekolah modern.',
 })
 
 const search = ref('')

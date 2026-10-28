@@ -10,6 +10,24 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted } from 'vue'
+
+const requestUrl = useRequestURL()
+const ogImageUrl = computed(() => `${requestUrl.origin}/og-image.png`)
+
+useSeoMeta({
+  ogSiteName: 'School Smart Digital',
+  ogType: 'website',
+  ogImage: ogImageUrl,
+  ogImageSecureUrl: ogImageUrl,
+  ogImageType: 'image/png',
+  ogImageWidth: 512,
+  ogImageHeight: 512,
+  ogImageAlt: 'Logo School Smart Digital',
+  twitterCard: 'summary',
+  twitterImage: ogImageUrl,
+})
+
 // Prevent Material Symbols ligature text flashing (FOUC)
 onMounted(() => {
   const doc = typeof document !== 'undefined' ? document : null

@@ -50,11 +50,22 @@ export default defineNuxtConfig({
         { name: 'theme-color', content: '#12355B' },
         {
           name: 'description',
-          content: 'School Smart Digital (SSD) — Sistem operasi terpadu untuk sekolah modern oleh Digital Teknologi Perkasa. Menghubungkan seluruh lini operasional sekolah dalam satu ekosistem.',
+          content: 'Back Office, SPP, Presensi Siswa, Verifikasi antar-jemput Siswa, asrama, dan portal wali murid dalam satu data. Aplikasi sekolah dari PT Digital Teknologi Perkasa. Jadwalkan demo.',
         },
+        { property: 'og:site_name', content: 'School Smart Digital' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:image', content: '/og-image.png' },
+        { property: 'og:image:type', content: 'image/png' },
+        { property: 'og:image:width', content: '512' },
+        { property: 'og:image:height', content: '512' },
+        { property: 'og:image:alt', content: 'Logo School Smart Digital' },
+        { name: 'twitter:card', content: 'summary' },
+        { name: 'twitter:image', content: '/og-image.png' },
       ],
       link: [
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' },
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         {

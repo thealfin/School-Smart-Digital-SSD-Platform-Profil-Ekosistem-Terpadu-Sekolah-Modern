@@ -7,14 +7,11 @@ import {
   resolveGalleryEmbedUrl,
 } from '~/utils/mediaParser'
 
-useHead({
-  title: 'Galeri & Dokumentasi Bimtek - School Smart Digital',
-  meta: [
-    {
-      name: 'description',
-      content: 'Dokumentasi kegiatan bimbingan teknis, pelatihan guru, sosialisasi wali siswa, dan instalasi hardware smart turnstile gate SSD.',
-    },
-  ],
+useSeoMeta({
+  title: 'Galeri & Dokumentasi Bimtek || School Smart Digital ||',
+  description: 'Dokumentasi bimbingan teknis, pelatihan guru, sosialisasi wali murid, dan pemasangan turnstile gate SSD.',
+  ogTitle: 'Galeri & Dokumentasi Bimtek || School Smart Digital ||',
+  ogDescription: 'Dokumentasi bimbingan teknis, pelatihan guru, sosialisasi wali murid, dan pemasangan turnstile gate SSD.',
 })
 
 const { data } = await useFetch('/api/gallery')

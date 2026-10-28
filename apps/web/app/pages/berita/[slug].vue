@@ -20,6 +20,15 @@ if (error.value || !article.value) {
   throw createError({ statusCode: 404, statusMessage: 'Artikel Tidak Ditemukan' })
 }
 
+useSeoMeta({
+  title: () => `${article.value?.title || 'Berita'} || School Smart Digital ||`,
+  description: () => article.value?.summary || 'Warta dan informasi ekosistem School Smart Digital.',
+  ogTitle: () => `${article.value?.title || 'Berita'} || School Smart Digital ||`,
+  ogDescription: () => article.value?.summary || 'Warta dan informasi ekosistem School Smart Digital.',
+  ogImage: () => article.value?.coverImageUrl || '/og-image.png',
+  twitterCard: 'summary_large_image',
+})
+
 const scrollProgress = ref(0)
 const linkCopied = ref(false)
 

@@ -2,14 +2,11 @@
 import { computed } from 'vue'
 import { fallbackContent, type LandingContent } from '@ssd/shared'
 
-useHead({
-  title: 'Tentang Kami, Rekam Jejak & Perbandingan — School Smart Digital',
-  meta: [
-    {
-      name: 'description',
-      content: 'Profil PT Digital Teknologi Perkasa, rekam jejak implementasi School Smart Digital, serta tabel perbandingan jujur solusi konvensional vs ekosistem SSD.',
-    },
-  ],
+useSeoMeta({
+  title: 'Tentang Kami & Perbandingan || School Smart Digital ||',
+  description: 'Profil PT Digital Teknologi Perkasa, pengembang SSD, dan perbandingan SSD dengan paket aplikasi absen + SPP pada umumnya.',
+  ogTitle: 'Tentang Kami & Perbandingan || School Smart Digital ||',
+  ogDescription: 'Profil PT Digital Teknologi Perkasa, pengembang SSD, dan perbandingan SSD dengan paket aplikasi absen + SPP pada umumnya.',
 })
 
 const { data: contentData } = await useAsyncData<LandingContent>(
