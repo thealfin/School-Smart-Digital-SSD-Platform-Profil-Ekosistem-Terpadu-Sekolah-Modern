@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import {
   type GalleryMediaType,
   detectMediaType,
@@ -30,6 +30,11 @@ const isLogoutModalOpen = ref(false)
 const isMobileSidebarOpen = ref(false)
 const previewItem = ref<any | null>(null)
 const brokenThumbs = reactive<Record<string, boolean>>({})
+const extractedThumbs = reactive<Record<string, string>>({})
+const fetchingThumbs = reactive<Record<string, boolean>>({})
+const isExtractingFormThumb = ref(false)
+const autoExtractedFormThumb = ref('')
+let extractTimer: ReturnType<typeof setTimeout> | null = null
 
 // Official SVG paths from https://thesvg.org/icon/{youtube,tiktok,instagram}
 const THESVG_PATHS: Record<'youtube' | 'tiktok' | 'instagram', string> = {
@@ -128,13 +133,55 @@ const dynamicSourcePlaceholder = computed(() => {
 })
 
 const liveParsedMedia = computed(() => {
-  return parseMediaUrl(form.sourceUrl, form.mediaType, form.thumbnailUrl)
+  return parseMediaUrl(
+    form.sourceUrl,
+    form.mediaType,
+    form.thumbnailUrl || autoExtractedFormThumb.value
+  )
 })
 
+async function triggerFormThumbnailExtraction(rawUrl: string) {
+  const url = rawUrl.trim()
+  if (!url) {
+    autoExtractedFormThumb.value = ''
+    return
+  }
+  const detected = detectMediaType(url, form.mediaType)
+  if (detected !== 'tiktok' && detected !== 'instagram') {
+    autoExtractedFormThumb.value = ''
+    return
+  }
+
+  isExtractingFormThumb.value = true
+  try {
+    const res = await $fetch<{ thumbnailUrl?: string | null }>('/api/extract-thumbnail', {
+      query: { url },
+    })
+    if (res?.thumbnailUrl) {
+      autoExtractedFormThumb.value = res.thumbnailUrl
+      if (!form.thumbnailUrl.trim()) {
+        form.thumbnailUrl = res.thumbnailUrl
+      }
+    }
+  } catch {
+    // Silent fallback
+  } finally {
+    isExtractingFormThumb.value = false
+  }
+}
+
 function onSourceUrlInput() {
-  if (!form.sourceUrl.trim()) return
+  if (!form.sourceUrl.trim()) {
+    autoExtractedFormThumb.value = ''
+    return
+  }
   const detected = detectMediaType(form.sourceUrl, form.mediaType)
   form.mediaType = detected
+
+  if (extractTimer) clearTimeout(extractTimer)
+  extractTimer = setTimeout(() => {
+    triggerFormThumbnailExtraction(form.sourceUrl)
+  }, 450)
 }
 
 function openAddModal() {
@@ -142,6 +189,7 @@ function openAddModal() {
   editingId.value = null
   isCreatingCategory.value = false
   newCategoryName.value = ''
+  autoExtractedFormThumb.value = ''
   form.title = ''
   form.category = 'bimtek'
   form.location = ''
@@ -157,6 +205,7 @@ function openEditModal(item: any) {
   editingId.value = item.id
   isCreatingCategory.value = false
   newCategoryName.value = ''
+  autoExtractedFormThumb.value = extractedThumbs[item.id] || ''
   form.title = item.title || ''
   form.category = item.category || 'bimtek'
   form.location = item.location || ''
@@ -164,19 +213,75 @@ function openEditModal(item: any) {
   form.mediaType = detectMediaType(src, item.mediaType || item.media_type)
   form.sourceUrl = src
   const rawThumb = item.thumbnailUrl || item.thumbnail_url || ''
-  form.thumbnailUrl = rawThumb === src && form.mediaType === 'image' ? '' : rawThumb
+  const isVideoLink = /tiktok\.com|instagram\.com|youtube\.com|youtu\.be/i.test(rawThumb)
+  form.thumbnailUrl = (rawThumb === src || isVideoLink) ? (extractedThumbs[item.id] || '') : rawThumb
   form.description = item.description || ''
   isModalOpen.value = true
+
+  if (!form.thumbnailUrl && (form.mediaType === 'tiktok' || form.mediaType === 'instagram')) {
+    triggerFormThumbnailExtraction(src)
+  }
 }
 
 function getCardMediaType(item: any): GalleryMediaType {
   return detectMediaType(item.sourceUrl || item.source_url || item.imageUrl || '', item.mediaType || item.media_type)
 }
 
-function getCardThumbnail(item: any): string | null {
-  if (brokenThumbs[item.id]) return null
-  return resolveGalleryCardThumbnail(item)
+async function hydrateAdminCardThumbnail(item: any) {
+  if (!import.meta.client || !item?.id) return
+  if (extractedThumbs[item.id] || fetchingThumbs[item.id]) return
+  const mType = getCardMediaType(item)
+  if (mType !== 'tiktok' && mType !== 'instagram') return
+  const srcUrl = String(item.sourceUrl || item.source_url || item.imageUrl || '').trim()
+  if (!srcUrl) return
+
+  fetchingThumbs[item.id] = true
+  try {
+    const res = await $fetch<{ thumbnailUrl?: string | null }>('/api/extract-thumbnail', {
+      query: { url: srcUrl, id: item.id },
+    })
+    if (res?.thumbnailUrl) {
+      extractedThumbs[item.id] = res.thumbnailUrl
+      delete brokenThumbs[item.id]
+    }
+  } catch {
+    // Keep placeholder if extraction fails
+  } finally {
+    fetchingThumbs[item.id] = false
+  }
 }
+
+function hydrateAllAdminThumbnails() {
+  if (!import.meta.client) return
+  for (const item of items.value) {
+    if (!resolveGalleryCardThumbnail(item)) {
+      hydrateAdminCardThumbnail(item)
+    }
+  }
+}
+
+function getCardThumbnail(item: any): string | null {
+  if (!item || brokenThumbs[item.id]) return null
+  if (extractedThumbs[item.id]) return extractedThumbs[item.id]
+  const resolved = resolveGalleryCardThumbnail(item)
+  if (resolved) return resolved
+  if (import.meta.client) {
+    hydrateAdminCardThumbnail(item)
+  }
+  return null
+}
+
+watch(
+  () => items.value,
+  () => {
+    hydrateAllAdminThumbnails()
+  },
+  { immediate: true }
+)
+
+onMounted(() => {
+  hydrateAllAdminThumbnails()
+})
 
 function getPlatformBadge(mediaType: GalleryMediaType) {
   return mediaTypeOptions.find((m) => m.id === mediaType) || mediaTypeOptions[0]

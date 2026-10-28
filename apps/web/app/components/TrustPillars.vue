@@ -42,7 +42,7 @@ const pillars: TrustPillar[] = [
     numberLabel: '04',
     title: 'Jejak Audit Terbuka',
     rule: 'Riwayat izin keluar dan presensi tercatat di Back Office',
-    description: 'Seluruh pencatatan izin santri, pemindaian pos gerbang, mutasi kas, hingga penarikan tabungan tercatat permanen dalam audit trail yang tidak dapat diubah.',
+    description: 'Seluruh pencatatan izin siswa, pemindaian pos gerbang, mutasi kas, hingga penarikan tabungan tercatat permanen dalam audit trail yang tidak dapat diubah.',
     badgeText: 'Audit Trail Otomatis',
     iconName: 'history',
   },
@@ -60,7 +60,7 @@ const pillars: TrustPillar[] = [
           <span class="text-xs text-navy-800 font-mono">4 PILAR TERVERIFIKASI</span>
         </div>
         <h2 id="trust-pillars-heading" class="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-navy-950 tracking-tight leading-tight">
-          Dirancang untuk melindungi santri, data sekolah, dan ketenangan pimpinan.
+          Dirancang untuk melindungi siswa, data sekolah, dan ketenangan pimpinan.
         </h2>
         <p class="mt-4 text-base sm:text-lg text-navy-800 leading-relaxed">
           Kami hanya mencantumkan fitur keamanan yang benar-benar aktif atau teruji secara arsitektural. Tidak ada klaim kosong atau angka persentase tanpa bukti.

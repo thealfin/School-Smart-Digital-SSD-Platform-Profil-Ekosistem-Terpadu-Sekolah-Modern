@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import {
   type GalleryMediaType,
   detectMediaType,
@@ -23,6 +23,8 @@ const items = computed(() => data.value?.items || [])
 const activeCategory = ref('all')
 const activeItem = ref<any | null>(null)
 const brokenThumbs = reactive<Record<string, boolean>>({})
+const extractedThumbs = reactive<Record<string, string>>({})
+const fetchingThumbs = reactive<Record<string, boolean>>({})
 
 const defaultGalleryCategories = [
   { id: 'bimtek', label: 'Bimtek & Pendampingan', color: '#01A8CF' },
@@ -75,9 +77,48 @@ function getItemMediaType(item: any): GalleryMediaType {
   )
 }
 
+async function hydrateItemThumbnail(item: any) {
+  if (!import.meta.client || !item?.id) return
+  if (extractedThumbs[item.id] || fetchingThumbs[item.id]) return
+  const mType = getItemMediaType(item)
+  if (mType !== 'tiktok' && mType !== 'instagram') return
+  const srcUrl = String(item.sourceUrl || item.source_url || item.imageUrl || '').trim()
+  if (!srcUrl) return
+
+  fetchingThumbs[item.id] = true
+  try {
+    const res = await $fetch<{ thumbnailUrl?: string | null }>('/api/extract-thumbnail', {
+      query: { url: srcUrl, id: item.id },
+    })
+    if (res?.thumbnailUrl) {
+      extractedThumbs[item.id] = res.thumbnailUrl
+      delete brokenThumbs[item.id]
+    }
+  } catch {
+    // Keep elegant fallback placeholder if extraction fails
+  } finally {
+    fetchingThumbs[item.id] = false
+  }
+}
+
+function hydrateAllMissingThumbnails() {
+  if (!import.meta.client) return
+  for (const item of items.value) {
+    if (!resolveGalleryCardThumbnail(item)) {
+      hydrateItemThumbnail(item)
+    }
+  }
+}
+
 function getItemThumbnail(item: any): string | null {
   if (!item || brokenThumbs[item.id]) return null
-  return resolveGalleryCardThumbnail(item)
+  if (extractedThumbs[item.id]) return extractedThumbs[item.id]
+  const resolved = resolveGalleryCardThumbnail(item)
+  if (resolved) return resolved
+  if (import.meta.client) {
+    hydrateItemThumbnail(item)
+  }
+  return null
 }
 
 // Official SVG paths from https://thesvg.org/icon/{youtube,tiktok,instagram}
@@ -135,11 +176,35 @@ const activeMediaType = computed<GalleryMediaType>(() => {
 
 function openPreview(item: any) {
   activeItem.value = item
+  if (import.meta.client) {
+    document.body.classList.add('has-video-modal-open')
+  }
 }
 
 function closePreview() {
   activeItem.value = null
+  if (import.meta.client) {
+    document.body.classList.remove('has-video-modal-open')
+  }
 }
+
+watch(
+  () => items.value,
+  () => {
+    hydrateAllMissingThumbnails()
+  },
+  { immediate: true }
+)
+
+onMounted(() => {
+  hydrateAllMissingThumbnails()
+})
+
+onBeforeUnmount(() => {
+  if (import.meta.client) {
+    document.body.classList.remove('has-video-modal-open')
+  }
+})
 </script>
 
 <template>

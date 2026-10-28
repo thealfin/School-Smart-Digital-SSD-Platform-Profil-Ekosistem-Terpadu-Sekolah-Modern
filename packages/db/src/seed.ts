@@ -254,7 +254,7 @@ export async function seed(dbInstance?: Db): Promise<void> {
       slug: 'bimtek-implementasi-school-smart-digital',
       title: 'Bimbingan Teknis Implementasi School Smart Digital Bersama Puluhan Sekolah Mitra',
       summary: 'PT Digital Teknologi Perkasa menyelenggarakan bimbingan teknis terpadu untuk percepatan digitalisasi operasional sekolah berbasis satu ekosistem data terintegrasi.',
-      content: `<p>Sebagai wujud komitmen dalam mengakselerasi transformasi digital pendidikan nasional, <strong>PT Digital Teknologi Perkasa</strong> menggelar agenda Bimbingan Teknis (Bimtek) Implementasi <em>School Smart Digital (SSD)</em> bersama para kepala sekolah, wakil kurikulum, dan staf tata usaha dari puluhan sekolah mitra.</p><p>Kegiatan ini memfokuskan pada integrasi 12 pilar aplikasi sekolah—mulai dari manajemen presensi berbasis smart turnstile & gate Kartu Pelajar Pintar QR Code, buku induk digital terpadu, hingga otomasi laporan keuangan dan SPP sekolah.</p><p>Dengan hadirnya ekosistem SSD, sekolah kini mampu menghemat ratusan jam kerja administratif bulanan serta menyajikan transparansi data akademik dan perkembangan karakter siswa langsung ke perangkat telepon pintar para orang tua/wali murid secara realtime.</p>`,
+      content: `<p>Sebagai wujud komitmen dalam mengakselerasi transformasi digital pendidikan nasional, <strong>PT Digital Teknologi Perkasa</strong> menggelar agenda Bimbingan Teknis (Bimtek) Implementasi <em>School Smart Digital (SSD)</em> bersama para kepala sekolah, wakil kurikulum, dan staf tata usaha dari puluhan sekolah mitra.</p><p>Kegiatan ini memfokuskan pada integrasi 12 pilar aplikasi sekolah, mulai dari manajemen presensi berbasis smart turnstile & gate Kartu Pelajar Pintar QR Code, buku induk digital terpadu, hingga otomasi laporan keuangan dan SPP sekolah.</p><p>Dengan hadirnya ekosistem SSD, sekolah kini mampu menghemat ratusan jam kerja administratif bulanan serta menyajikan transparansi data akademik dan perkembangan karakter siswa langsung ke perangkat telepon pintar para orang tua/wali murid secara realtime.</p>`,
       category: 'Bimtek',
       coverImageUrl: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80',
       author: 'Tim Humas SSD',
@@ -306,17 +306,51 @@ export async function seed(dbInstance?: Db): Promise<void> {
   console.log('  -> Seeding galleries...')
   await db.delete(schema.galleries)
 
-  let tiktokAutoThumb = 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80'
+  let tiktokAutoThumb = ''
   try {
-    const oembedRes = await fetch('https://www.tiktok.com/oembed?url=https://www.tiktok.com/@schoolsmartdigital/video/7700126040416406836')
+    const cleanTiktokUrl = 'https://www.tiktok.com/@schoolsmartdigital/video/7700126040416406836'
+    const oembedRes = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(cleanTiktokUrl)}`, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124.0.0.0 Safari/537.36' },
+    })
     if (oembedRes.ok) {
       const oembedJson = (await oembedRes.json()) as { thumbnail_url?: string }
       if (oembedJson?.thumbnail_url) {
-        tiktokAutoThumb = oembedJson.thumbnail_url
+        tiktokAutoThumb = `/api/image-proxy?url=${encodeURIComponent(oembedJson.thumbnail_url)}`
+      }
+    }
+    if (!tiktokAutoThumb) {
+      const mRes = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(cleanTiktokUrl)}`)
+      if (mRes.ok) {
+        const mJson = (await mRes.json()) as { data?: { image?: { url?: string } } }
+        if (mJson?.data?.image?.url) {
+          tiktokAutoThumb = `/api/image-proxy?url=${encodeURIComponent(mJson.data.image.url)}`
+        }
       }
     }
   } catch {
-    // Use fallback thumbnail if oEmbed is unreachable
+    // Client-side lazy hydration will resolve if network is offline during seed
+  }
+
+  let igAutoThumb = ''
+  try {
+    const cleanIgUrl = 'https://www.instagram.com/reel/De9N5uDp5JZ/'
+    const igRes = await fetch(cleanIgUrl, {
+      headers: {
+        'User-Agent': 'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
+        'Accept': 'text/html,application/xhtml+xml',
+      },
+    })
+    if (igRes.ok) {
+      const html = await igRes.text()
+      const ogMatch = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
+        || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i)
+      if (ogMatch?.[1]) {
+        const rawIgThumb = ogMatch[1].replace(/&amp;/g, '&').trim()
+        igAutoThumb = `/api/image-proxy?url=${encodeURIComponent(rawIgThumb)}`
+      }
+    }
+  } catch {
+    // Client-side lazy hydration will resolve if network is offline during seed
   }
 
   const initialGalleries = [
@@ -325,8 +359,8 @@ export async function seed(dbInstance?: Db): Promise<void> {
       category: 'kegiatan',
       mediaType: 'tiktok',
       sourceUrl: 'https://www.tiktok.com/@schoolsmartdigital/video/7700126040416406836?_r=1&_t=ZS-9ArrTSlSgrw',
-      thumbnailUrl: tiktokAutoThumb,
-      imageUrl: tiktokAutoThumb,
+      thumbnailUrl: tiktokAutoThumb || null,
+      imageUrl: tiktokAutoThumb || 'https://www.tiktok.com/@schoolsmartdigital/video/7700126040416406836?_r=1&_t=ZS-9ArrTSlSgrw',
       description: 'Cuplikan dokumentasi resmi TikTok @schoolsmartdigital mengenai penerapan ekosistem pintar manajemen sekolah modern.',
       location: 'School Smart Digital Official',
       orderIndex: 0,
@@ -337,8 +371,8 @@ export async function seed(dbInstance?: Db): Promise<void> {
       category: 'bimtek',
       mediaType: 'instagram',
       sourceUrl: 'https://www.instagram.com/reel/De9N5uDp5JZ/?vrfl=MWNmdm1zODF2eDY4cg==',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80',
-      imageUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80',
+      thumbnailUrl: igAutoThumb || null,
+      imageUrl: igAutoThumb || 'https://www.instagram.com/reel/De9N5uDp5JZ/?vrfl=MWNmdm1zODF2eDY4cg==',
       description: 'Dokumentasi video pendek Instagram Reels kegiatan pendampingan dan digitalisasi sekolah mitra SSD.',
       location: 'Sekolah Mitra SSD',
       orderIndex: 1,

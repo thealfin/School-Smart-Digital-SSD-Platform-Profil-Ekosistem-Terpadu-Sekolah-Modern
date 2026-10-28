@@ -2,7 +2,7 @@ import { defineEventHandler, readBody, createError } from 'h3'
 import { schema } from '@ssd/db'
 import { useDb } from '../../../utils/db'
 import { requireAdmin } from '../../../utils/auth'
-import { parseMediaUrl, fetchTikTokOembedThumbnail } from '../../../utils/mediaParser'
+import { parseMediaUrl, extractExternalMediaThumbnail } from '../../../utils/mediaParser'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
@@ -20,9 +20,9 @@ export default defineEventHandler(async (event) => {
 
   let finalThumbnailUrl = parsed.autoThumbnailUrl
 
-  // Auto-fetch TikTok oEmbed thumbnail if media_type === 'tiktok' and thumbnail_url is empty
-  if (parsed.mediaType === 'tiktok' && !finalThumbnailUrl) {
-    finalThumbnailUrl = await fetchTikTokOembedThumbnail(rawSourceUrl)
+  // Auto-fetch TikTok or Instagram Reels thumbnail if thumbnail_url is empty
+  if ((parsed.mediaType === 'tiktok' || parsed.mediaType === 'instagram') && !finalThumbnailUrl) {
+    finalThumbnailUrl = await extractExternalMediaThumbnail(rawSourceUrl)
   }
 
   const category = body.category ? String(body.category).trim() : 'bimtek'

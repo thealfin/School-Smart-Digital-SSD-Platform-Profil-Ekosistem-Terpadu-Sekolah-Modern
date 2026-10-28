@@ -143,8 +143,17 @@ export function resolveGalleryCardThumbnail(item: Record<string, any>): string |
   const isVideoPageLink = (u: string) =>
     /tiktok\.com\/@|tiktok\.com\/v\/|instagram\.com\/(?:reel|reels|p)\/|youtube\.com\/watch|youtu\.be\//i.test(u)
 
+  const ensureProxyIfNeeded = (u: string) => {
+    if (!u) return u
+    if (u.startsWith('/api/image-proxy')) return u
+    if (/cdninstagram\.com|fbcdn\.net|tiktokcdn/i.test(u)) {
+      return `/api/image-proxy?url=${encodeURIComponent(u)}`
+    }
+    return u
+  }
+
   if (rawThumb && !isVideoPageLink(rawThumb)) {
-    return rawThumb
+    return ensureProxyIfNeeded(rawThumb)
   }
 
   if (mediaType === 'youtube') {
@@ -154,13 +163,13 @@ export function resolveGalleryCardThumbnail(item: Record<string, any>): string |
 
   if (mediaType === 'image') {
     const fallbackImg = String(item.imageUrl || item.image_url || sourceUrl).trim()
-    return fallbackImg || null
+    return fallbackImg ? ensureProxyIfNeeded(fallbackImg) : null
   }
 
   // If imageUrl was populated with an actual image CDN URL (e.g. from TikTok oEmbed), use it
   const legacyImg = String(item.imageUrl || item.image_url || '').trim()
   if (legacyImg && legacyImg !== sourceUrl && !isVideoPageLink(legacyImg)) {
-    return legacyImg
+    return ensureProxyIfNeeded(legacyImg)
   }
 
   return null

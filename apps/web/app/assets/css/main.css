@@ -385,3 +385,12 @@ body:has([data-admin-root]) .reveal-right,
     transition: none !important;
   }
 }
+
+/* Hide mobile hamburger and floating navigation pill when video lightbox modal is open */
+body.has-video-modal-open .mobile-menu-btn,
+body.has-video-modal-open .nav-floating-pill {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}

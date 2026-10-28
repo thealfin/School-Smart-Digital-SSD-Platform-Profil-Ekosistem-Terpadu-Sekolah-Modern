@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useEcosystemStore } from '~/stores/ecosystem'
+import { resolveApkIcon } from '~/utils/apkIcons'
 import type { AppItem } from '@ssd/shared/types'
 
 const props = defineProps<{
@@ -122,18 +123,34 @@ onMounted(() => {
               <!-- Mockup Visual Display Screen -->
               <div class="viewport-screen">
                 <div class="screen-preview-content">
-                  <div class="screen-hero-badge">
-                    <span class="screen-app-num">
-                      APP {{ String(ecosystemStore.activeApp.number).padStart(2, '0') }}
-                    </span>
-                    <span class="screen-platform">
-                      {{ ecosystemStore.activeApp.platformLabel }}
-                    </span>
-                  </div>
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <div class="screen-hero-badge">
+                        <span class="screen-app-num">
+                          APP {{ String(ecosystemStore.activeApp.number).padStart(2, '0') }}
+                        </span>
+                        <span class="screen-platform">
+                          {{ ecosystemStore.activeApp.platformLabel }}
+                        </span>
+                      </div>
 
-                  <h3 class="screen-app-name">
-                    {{ ecosystemStore.activeApp.name }}
-                  </h3>
+                      <h3 class="screen-app-name">
+                        {{ ecosystemStore.activeApp.name }}
+                      </h3>
+                    </div>
+
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/10 border border-white/20 p-1.5 flex items-center justify-center shrink-0 shadow-lg backdrop-blur-xs">
+                      <img
+                        v-if="resolveApkIcon(ecosystemStore.activeApp.slug, ecosystemStore.activeApp.name)"
+                        :src="resolveApkIcon(ecosystemStore.activeApp.slug, ecosystemStore.activeApp.name)!"
+                        :alt="ecosystemStore.activeApp.name"
+                        class="w-full h-full object-contain drop-shadow-md"
+                      />
+                      <span v-else class="material-symbols-rounded text-3xl text-cyan-300" aria-hidden="true">
+                        {{ ecosystemStore.activeApp.iconName || 'apps' }}
+                      </span>
+                    </div>
+                  </div>
                   <p class="screen-tagline">
                     {{ ecosystemStore.activeApp.tagline }}
                   </p>
@@ -205,8 +222,22 @@ onMounted(() => {
             :tabindex="ecosystemStore.activeSlug === app.slug ? 0 : -1"
             @click="handleAppSelect(app.slug, index)"
           >
-            <!-- 2-Digit Number -->
-            <span class="row-num">{{ String(app.number).padStart(2, '0') }}</span>
+            <!-- 2-Digit Number & APK Icon -->
+            <div class="flex items-center gap-2.5 shrink-0">
+              <span class="row-num">{{ String(app.number).padStart(2, '0') }}</span>
+              <div class="w-9 h-9 rounded-xl bg-slate-100/80 border border-slate-200/70 p-1 flex items-center justify-center shrink-0">
+                <img
+                  v-if="resolveApkIcon(app.slug, app.name)"
+                  :src="resolveApkIcon(app.slug, app.name)!"
+                  :alt="app.name"
+                  class="w-full h-full object-contain"
+                  loading="lazy"
+                />
+                <span v-else class="material-symbols-rounded text-lg text-cyan-700" aria-hidden="true">
+                  {{ app.iconName || 'apps' }}
+                </span>
+              </div>
+            </div>
 
             <!-- App Meta -->
             <div class="row-info">

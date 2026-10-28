@@ -7,12 +7,13 @@ import {
   SSD_LOGO_NAVY_COLOR,
   SSD_LOGO_CYAN_COLOR,
 } from '~/utils/ssd-logo-paths'
+import { APK_ICON_FILES } from '~/utils/apkIcons'
 
-  // Zero-JS Fallback Stylesheet for Legacy Crawlers (injected safely into <head>)
+// Zero-JS Fallback Stylesheet for Legacy Crawlers (injected safely into <head>)
 useHead({
   noscript: [
     {
-      innerHTML: `<style>.hero-cliff { height: auto !important; min-height: 100svh; } .stage { position: relative !important; height: auto !important; min-height: 100svh; overflow: visible !important; } .portal-type, .caption, .hint { display: none !important; } .hero-flanks-layer { display: none !important; } .media { position: relative !important; clip-path: none !important; min-height: 50svh; } .ledge { position: relative !important; transform: none !important; pointer-events: auto !important; opacity: 1 !important; box-shadow: none; border-top: none; }</style>`,
+      innerHTML: `<style>.hero-cliff { height: auto !important; min-height: 100svh; } .stage { position: relative !important; height: auto !important; min-height: 100svh; overflow: visible !important; } .portal-type, .caption, .hint, .s-curve-portal-stage { display: none !important; } .hero-flanks-layer { display: none !important; } .media { position: relative !important; clip-path: none !important; min-height: 50svh; opacity: 1 !important; } .ledge { position: relative !important; transform: none !important; pointer-events: auto !important; opacity: 1 !important; box-shadow: none; border-top: none; }</style>`,
     },
   ],
 })
@@ -20,12 +21,54 @@ useHead({
 const rootEl = ref<HTMLElement | null>(null)
 const stageEl = ref<HTMLElement | null>(null)
 const mediaEl = ref<HTMLElement | null>(null)
+const threeCanvasEl = ref<HTMLCanvasElement | null>(null)
 
 const isScrolly = ref(false)
 const isOpen = ref(false)
 const prefersReducedMotion = ref(false)
+const currentScrollE = ref(0)
+
+// 5 Floating APK Icons positioned along the right curve of the S-portal
+const portalApkBadges = [
+  {
+    id: 'pimpinan',
+    label: 'SSD Pimpinan & Yayasan',
+    icon: APK_ICON_FILES.pimpinan,
+    badgeClass: 'apk-float-1',
+    isCallout: true,
+  },
+  {
+    id: 'pegawai',
+    label: 'SSD Pegawai & Guru',
+    icon: APK_ICON_FILES.pegawai,
+    badgeClass: 'apk-float-2',
+    isCallout: false,
+  },
+  {
+    id: 'wali-murid',
+    label: 'SSD Wali Murid',
+    icon: APK_ICON_FILES.waliMurid,
+    badgeClass: 'apk-float-3',
+    isCallout: false,
+  },
+  {
+    id: 'security',
+    label: 'SSD Security & Turnstile',
+    icon: APK_ICON_FILES.security,
+    badgeClass: 'apk-float-4',
+    isCallout: false,
+  },
+  {
+    id: 'mitra-usaha',
+    label: 'SSD Mitra Usaha & Kantin',
+    icon: APK_ICON_FILES.mitraUsaha,
+    badgeClass: 'apk-float-5',
+    isCallout: false,
+  },
+]
 
 let ticking = false
+let threeCleanup: (() => void) | null = null
 
 /**
  * Standard cubic ease-in-out curve
@@ -59,6 +102,7 @@ function updateGeometry() {
     root.style.setProperty('--b', '1')
     root.style.setProperty('--over', '100%')
     media.style.clipPath = 'none'
+    currentScrollE.value = 1
     isOpen.value = true
     return
   }
@@ -80,7 +124,7 @@ function updateGeometry() {
   const tb = Math.min(Math.max((p - 0.70) / 0.30, 0), 1)
   const b = easeOutCubic(tb)
 
-  // Initial aperture dimensions (w0, h0) matching authentic SSD Logo square-portal proportions
+  // Initial aperture dimensions (w0, h0) matching authentic SSD Logo proportions
   let w0: number
   let h0: number
   let cy: number
@@ -95,7 +139,7 @@ function updateGeometry() {
   } else {
     w0 = Math.min(Math.max(0.28 * W, 280), 440)
     h0 = Math.min(0.58 * H, 1.12 * w0)
-    cy = 0.53 * H
+    cy = 0.50 * H
   }
 
   // Morph interpolation to full screen
@@ -119,6 +163,7 @@ function updateGeometry() {
   root.style.setProperty('--p', p.toFixed(4))
   root.style.setProperty('--e', e.toFixed(4))
   root.style.setProperty('--b', b.toFixed(4))
+  currentScrollE.value = e
 
   // Navigation adaptive color mix over hero (--over reaches 100% when e >= 0.95)
   const over = Math.min(Math.max((e - 0.75) * 4, 0), 1)
@@ -135,6 +180,139 @@ function onScrollOrResize() {
       updateGeometry()
       ticking = false
     })
+  }
+}
+
+/**
+ * Initialize Three.js 3D S-Curve Ribbon & Glossy Specular Lighting inside the S-portal mask
+ */
+async function initThreePortal() {
+  const canvas = threeCanvasEl.value
+  if (!canvas || prefersReducedMotion.value) return
+
+  try {
+    const THREE = await import('three')
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance',
+    })
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+    renderer.setSize(canvas.clientWidth || 560, canvas.clientHeight || 640, false)
+
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(38, (canvas.clientWidth || 560) / (canvas.clientHeight || 640), 0.1, 100)
+    camera.position.set(0, 0, 8.2)
+
+    // Lighting setup for glossy 3D navy-to-cyan S-curve surface
+    const ambientLight = new THREE.AmbientLight(0x0c3161, 2.2)
+    scene.add(ambientLight)
+
+    const topCyanLight = new THREE.PointLight(0x38bdf8, 5.5, 18)
+    topCyanLight.position.set(2.4, 3.2, 4.0)
+    scene.add(topCyanLight)
+
+    const bottomCyanLight = new THREE.PointLight(0x01a8cf, 4.8, 18)
+    bottomCyanLight.position.set(-2.2, -3.0, 3.5)
+    scene.add(bottomCyanLight)
+
+    const rimLight = new THREE.DirectionalLight(0xffffff, 2.0)
+    rimLight.position.set(0, 1.5, 5)
+    scene.add(rimLight)
+
+    // Create 3D S-Curve Tube / Ribbon Geometry matching the SSD S-swoosh
+    const sCurvePoints = [
+      new THREE.Vector3(1.85, 2.95, -0.3),
+      new THREE.Vector3(0.15, 1.85, 0.25),
+      new THREE.Vector3(-1.35, 0.55, 0.45),
+      new THREE.Vector3(0.0, -0.15, 0.55),
+      new THREE.Vector3(1.45, -1.05, 0.4),
+      new THREE.Vector3(-0.25, -2.25, 0.15),
+      new THREE.Vector3(-1.95, -3.05, -0.25),
+    ]
+    const curve = new THREE.CatmullRomCurve3(sCurvePoints)
+    const tubeGeo = new THREE.TubeGeometry(curve, 96, 1.05, 32, false)
+
+    const tubeMat = new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color('#0c3161'),
+      emissive: new THREE.Color('#061a38'),
+      roughness: 0.22,
+      metalness: 0.18,
+      clearcoat: 0.9,
+      clearcoatRoughness: 0.15,
+      transparent: true,
+      opacity: 0.92,
+    })
+
+    const sMesh = new THREE.Mesh(tubeGeo, tubeMat)
+    scene.add(sMesh)
+
+    // Secondary cyan accent ribbon hugging the inner S-curve
+    const accentCurvePoints = [
+      new THREE.Vector3(2.0, 3.05, 0.1),
+      new THREE.Vector3(-0.85, 1.1, 0.65),
+      new THREE.Vector3(1.15, -0.85, 0.7),
+      new THREE.Vector3(-1.8, -2.95, 0.1),
+    ]
+    const accentCurve = new THREE.CatmullRomCurve3(accentCurvePoints)
+    const accentGeo = new THREE.TubeGeometry(accentCurve, 72, 0.34, 24, false)
+    const accentMat = new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color('#01a8cf'),
+      emissive: new THREE.Color('#0284c7'),
+      emissiveIntensity: 0.45,
+      roughness: 0.18,
+      metalness: 0.1,
+      clearcoat: 1.0,
+      transparent: true,
+      opacity: 0.75,
+    })
+    const accentMesh = new THREE.Mesh(accentGeo, accentMat)
+    scene.add(accentMesh)
+
+    let animFrameId = 0
+    let startTime = performance.now()
+
+    const animate = (now: number) => {
+      animFrameId = requestAnimationFrame(animate)
+      const elapsed = (now - startTime) * 0.001
+      const eVal = currentScrollE.value
+
+      // Subtle 3D breathing & scroll-linked rotation
+      sMesh.rotation.y = Math.sin(elapsed * 0.9) * 0.12 + eVal * 0.45
+      sMesh.rotation.x = Math.cos(elapsed * 0.7) * 0.06 - eVal * 0.2
+      accentMesh.rotation.y = Math.sin(elapsed * 0.9 + 0.4) * 0.14 + eVal * 0.55
+
+      topCyanLight.position.x = 2.4 + Math.sin(elapsed * 1.3) * 0.6
+      bottomCyanLight.position.x = -2.2 + Math.cos(elapsed * 1.1) * 0.6
+
+      renderer.render(scene, camera)
+    }
+
+    animFrameId = requestAnimationFrame(animate)
+
+    const onResizeCanvas = () => {
+      if (!canvas) return
+      const w = canvas.clientWidth || 560
+      const h = canvas.clientHeight || 640
+      renderer.setSize(w, h, false)
+      camera.aspect = w / h
+      camera.updateProjectionMatrix()
+    }
+    window.addEventListener('resize', onResizeCanvas, { passive: true })
+
+    threeCleanup = () => {
+      cancelAnimationFrame(animFrameId)
+      window.removeEventListener('resize', onResizeCanvas)
+      tubeGeo.dispose()
+      tubeMat.dispose()
+      accentGeo.dispose()
+      accentMat.dispose()
+      renderer.dispose()
+    }
+  } catch {
+    // Graceful fallback to the SVG S-curve mask if WebGL context is unavailable
   }
 }
 
@@ -156,6 +334,7 @@ onMounted(() => {
     }
 
     updateGeometry()
+    initThreePortal()
   }
 })
 
@@ -163,6 +342,10 @@ onUnmounted(() => {
   if (typeof window !== 'undefined') {
     window.removeEventListener('scroll', onScrollOrResize)
     window.removeEventListener('resize', onScrollOrResize)
+  }
+  if (threeCleanup) {
+    threeCleanup()
+    threeCleanup = null
   }
 })
 </script>
@@ -175,14 +358,109 @@ onUnmounted(() => {
     aria-labelledby="hero-h1"
   >
     <div ref="stageEl" class="stage">
-      <!-- 1. Knockout Typography: Wall layer (Navy + Cyan on light wall) -->
+      <!-- Hidden SVG ClipPath Definition for the Organic S-Curve Portal Mask -->
+      <svg class="sr-only" width="0" height="0" aria-hidden="true">
+        <defs>
+          <clipPath id="ssd-s-curve-portal-mask" clipPathUnits="objectBoundingBox">
+            <!-- Smooth S-Curve Swoosh Silhouette matching Hero banner tampilan baru dengan portal view baru.png -->
+            <path
+              d="M 0.90,0.02 C 0.56,0.09 0.16,0.25 0.15,0.47 C 0.14,0.61 0.30,0.67 0.36,0.72 C 0.29,0.82 0.17,0.91 0.06,0.97 C 0.42,0.93 0.85,0.78 0.86,0.53 C 0.87,0.38 0.72,0.31 0.65,0.26 C 0.72,0.16 0.81,0.08 0.90,0.02 Z"
+            />
+          </clipPath>
+        </defs>
+      </svg>
+
+      <!-- 1. Knockout Typography: Wall layer (3D Extruded White/Cyan over S-Curve Portal) -->
       <p class="portal-type type-out" aria-hidden="true">
         <span class="type-line">SCHOOL</span>
         <span class="type-line">SMART</span>
         <span class="type-line type-line-digital">DIGITAL</span>
       </p>
 
-      <!-- 2. S-Curve Morph Aperture Media shaped with Lower Wing Logo SSD in Navy -->
+      <!-- 1B. S-Curve Masked 3D Portal View & Floating APK Badges (Active in Hero Initial State) -->
+      <div class="s-curve-portal-stage" aria-hidden="true">
+        <div class="s-curve-portal-inner">
+          <!-- Ambient cyan outer glow behind the S-curve -->
+          <div class="s-curve-ambient-glow"></div>
+
+          <!-- S-Curve Masked Viewport (SVG Gradient + Three.js 3D WebGL Ribbon) -->
+          <div class="s-curve-masked-body">
+            <!-- Multi-layered 3D Glossy S-Swoosh SVG Art -->
+            <svg
+              viewBox="0 0 600 680"
+              preserveAspectRatio="xMidYMid meet"
+              class="s-curve-vector-art"
+            >
+              <defs>
+                <linearGradient id="sCurveMainGrad" x1="85%" y1="0%" x2="15%" y2="100%">
+                  <stop offset="0%" stop-color="#38bdf8" />
+                  <stop offset="22%" stop-color="#0284c7" />
+                  <stop offset="48%" stop-color="#0c3161" />
+                  <stop offset="72%" stop-color="#0a254d" />
+                  <stop offset="90%" stop-color="#01a8cf" />
+                  <stop offset="100%" stop-color="#7dd3fc" />
+                </linearGradient>
+                <linearGradient id="sCurveInnerFold" x1="20%" y1="15%" x2="80%" y2="85%">
+                  <stop offset="0%" stop-color="#082042" stop-opacity="0.95" />
+                  <stop offset="50%" stop-color="#0c3161" stop-opacity="0.88" />
+                  <stop offset="100%" stop-color="#0284c7" stop-opacity="0.92" />
+                </linearGradient>
+                <linearGradient id="sCurveRimHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.85" />
+                  <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.25" />
+                  <stop offset="100%" stop-color="#bae6fd" stop-opacity="0.8" />
+                </linearGradient>
+              </defs>
+
+              <!-- Outer S-Swoosh Ribbon -->
+              <path
+                d="M 540,14 C 335,58 96,168 90,320 C 85,415 182,455 218,490 C 175,556 102,618 36,660 C 254,632 510,530 516,360 C 521,258 430,210 390,176 C 432,108 486,54 540,14 Z"
+                fill="url(#sCurveMainGrad)"
+              />
+
+              <!-- Inner 3D Fold Contour for depth matching reference image -->
+              <path
+                d="M 480,52 C 320,105 142,195 138,322 C 134,405 235,442 268,482 C 232,535 162,592 92,638 C 268,602 468,508 472,358 C 476,268 380,224 342,184 C 378,126 430,84 480,52 Z"
+                fill="url(#sCurveInnerFold)"
+              />
+
+              <!-- Specular Rim Highlight -->
+              <path
+                d="M 540,14 C 335,58 96,168 90,320 C 85,415 182,455 218,490 C 175,556 102,618 36,660 C 254,632 510,530 516,360 C 521,258 430,210 390,176 C 432,108 486,54 540,14 Z"
+                fill="none"
+                stroke="url(#sCurveRimHighlight)"
+                stroke-width="3"
+              />
+            </svg>
+
+            <!-- Three.js 3D WebGL Canvas Masked inside the S-Curve -->
+            <canvas ref="threeCanvasEl" class="portal-three-canvas"></canvas>
+          </div>
+
+          <!-- Floating APK Icon Badges along the Right Arc of the S-Curve Portal -->
+          <div class="s-curve-apk-orbit">
+            <div
+              v-for="badge in portalApkBadges"
+              :key="badge.id"
+              class="apk-orbit-badge"
+              :class="[badge.badgeClass, { 'is-callout-card': badge.isCallout }]"
+              :title="badge.label"
+            >
+              <div class="apk-orbit-icon-wrap">
+                <img
+                  :src="badge.icon"
+                  :alt="badge.label"
+                  class="apk-orbit-img"
+                  loading="eager"
+                />
+              </div>
+              <span v-if="badge.isCallout" class="apk-callout-pointer"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. S-Curve Morph Aperture Media (Expands to Full Viewport on Scroll) -->
       <div ref="mediaEl" class="media">
         <div class="pan">
           <!-- Authentic Lower Wing Logo SSD.svg Shape in Navy (#0C3161) -->
@@ -192,7 +470,6 @@ onUnmounted(() => {
               preserveAspectRatio="none"
               class="ssd-portal-svg"
             >
-              <!-- Shape sayap bawah SSD Logo, diwarnai Navy (#0C3161) sesuai instruksi -->
               <path
                 fill="#0C3161"
                 :d="SSD_LOGO_CYAN_PATH"
@@ -243,30 +520,14 @@ onUnmounted(() => {
         <span class="caption-pill">Ekosistem 12 Aplikasi Sekolah · Satu Data</span>
       </p>
       <p class="hint" aria-hidden="true">
-        <span>Scroll untuk membuka sistem ↓</span>
+        <span>SCROLL UNTUK MEMBUKA SISTEM ↓</span>
       </p>
 
       <!-- 4. Hero Flank Wings Layer: Desktop Sisi Kiri & Kanan Portal, Mobile Atas & Bawah Portal -->
       <div class="hero-flanks-layer">
-        <!-- Sayap Kiri: Text Kedua + Bagan Warna Cyan & Teks Navy di Sisi Kiri -->
+        <!-- Sayap Kiri -->
         <div class="hero-wing hero-wing-left">
           <div class="wing-inner-layout wing-left-layout">
-            <!-- Bagan warna cyan dan text berwarna navy di sisi kiri text kedua -->
-            <!-- <div class="wing-bagan-card wing-bagan-left" aria-hidden="true">
-              <div class="bagan-accent-line"></div>
-              <div class="bagan-body">
-                <div class="bagan-tag-row">
-                  <span class="bagan-status-dot"></span>
-                  <span class="bagan-tag-text">01 // PLATFORM</span>
-                </div>
-                <div class="bagan-data-block">
-                  <span class="bagan-title-text">EKOSISTEM DIGITAL</span>
-                  <span class="bagan-desc-text">12 Modul Terpadu · Multi-Unit</span>
-                </div>
-              </div> 
-            </div>
-
-            <!-- Konten Teks Kedua -->
             <div class="wing-text-content wing-text-left">
               <div class="hero-badge-pill">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-cyan-50 text-cyan-800 border border-cyan-200 shadow-xs">
@@ -289,29 +550,30 @@ onUnmounted(() => {
         <!-- Spacer / Portal Window Slot for desktop 3-col grid and mobile order centering -->
         <div class="hero-portal-window-slot" aria-hidden="true"></div>
 
-        <!-- Sayap Kanan: Text Pertama + Bagan Warna Cyan & Teks Navy di Sisi Kanan -->
+        <!-- Sayap Kanan: Feature Cards + Bagan Operasional -->
         <div class="hero-wing hero-wing-right">
           <div class="wing-inner-layout wing-right-layout">
-            <!-- Konten Teks Pertama -->
             <div class="wing-text-content wing-text-right">
-              <!-- <p class="hero-operational-desc">
-                Kelola seluruh operasional akademik, keuangan SPP terpadu, presensi smart turnstile QR Code, manajemen asrama/boarding school, hingga komunikasi wali santri dalam satu platform cerdas tanpa data terisolasi.
-              </p> -->
-
-              <!-- Checklist Benefit Points -->
-              <div class="hero-benefit-list mt-2 lg:mt-3 space-y-2">
-                <div class="benefit-item">
-                  <span class="benefit-check">✓</span>
-                  <span class="benefit-text">1 Akun Terpadu untuk Yayasan, Kepala Sekolah, Guru &amp; Orang Tua</span>
+              <!-- Checklist Benefit Feature Cards matching Preview Design -->
+              <div class="hero-benefit-list mt-2 lg:mt-3 space-y-2.5">
+                <div class="benefit-item benefit-card-elevated">
+                  <span class="benefit-check-circle">✓</span>
+                  <div class="benefit-card-copy">
+                    <span class="benefit-text">1 Akun Terpadu untuk Yayasan, Kepala Sekolah, Guru &amp; Orang Tua</span>
+                    <span class="benefit-subtext">Semua pihak dalam ekosistem sekolah dapat mengakses fitur sesuai peran masing-masing dalam satu akun terpadu.</span>
+                  </div>
                 </div>
-                <div class="benefit-item">
-                  <span class="benefit-check">✓</span>
-                  <span class="benefit-text">Real-time Sinkronisasi Tanpa Server Lokal yang Rumit</span>
+                <div class="benefit-item benefit-card-elevated">
+                  <span class="benefit-check-circle">✓</span>
+                  <div class="benefit-card-copy">
+                    <span class="benefit-text">Real-time Sinkronisasi Tanpa Server Lokal yang Rumit</span>
+                    <span class="benefit-subtext">Data selalu terbaru secara real-time tanpa perlu instalasi server lokal yang kompleks.</span>
+                  </div>
                 </div>
               </div>
 
-              <!-- Bagan warna cyan dan text berwarna navy di sisi kanan text pertama -->
-              <div class="wing-bagan-card wing-bagan-right mt-2.5 lg:mt-5" aria-hidden="true">
+              <!-- Bagan warna cyan dan text berwarna navy di sisi kanan -->
+              <div class="wing-bagan-card wing-bagan-right mt-2.5 lg:mt-4" aria-hidden="true">
                 <div class="bagan-accent-line"></div>
                 <div class="bagan-body">
                   <div class="bagan-tag-row">
@@ -320,14 +582,11 @@ onUnmounted(() => {
                   </div>
                   <div class="bagan-data-block">
                     <span class="bagan-title-text">SATU DATA TERPADU</span>
-                    <span class="bagan-desc-text">Kelola seluruh operasional akademik, keuangan SPP terpadu, presensi smart turnstile QR Code, manajemen Boarding School/Asrama, hingga komunikasi wali siswa dalam satu platform cerdas</span>
+                    <span class="bagan-desc-text">Kelola seluruh operasional akademik, keuangan SPP terpadu, presensi smart turnstile QR Code, manajemen Boarding School/Asrama, hingga komunikasi wali siswa dalam satu platform cerdas.</span>
                   </div>
                 </div>
               </div>
             </div>
-
-            <!--  -->
-            <!--  -->
           </div>
         </div>
       </div>
@@ -416,7 +675,7 @@ onUnmounted(() => {
 /* Knockout typography - 100% identical coordinate & font metrics for both layers */
 .portal-type {
   position: absolute;
-  top: 53%;
+  top: 48%;
   left: 50%;
   transform: translate(-50%, -50%);
   margin: 0;
@@ -424,8 +683,8 @@ onUnmounted(() => {
   font-family: var(--font-display, "Bricolage Grotesque", sans-serif);
   font-weight: 800;
   font-variation-settings: "opsz" 72, "wdth" 108;
-  font-size: clamp(3rem, min(12vw, 19.5vh), 196px);
-  line-height: 0.88;
+  font-size: min(15.5vw, 30vh, 260px);
+  line-height: 0.86;
   letter-spacing: -0.035em;
   white-space: nowrap;
   display: flex;
@@ -438,12 +697,33 @@ onUnmounted(() => {
   transition: opacity 60ms linear;
 }
 
+/* Calibrated 3D Extruded Typography sizing over S-Curve Portal */
+.stage .portal-type {
+  top: 50%;
+  font-size: clamp(2.85rem, min(7.2vw, 13.5vh), 108px);
+  line-height: 0.92;
+  z-index: 5;
+}
+
 .portal-type.type-out {
   color: var(--color-navy-900, #12355b);
 }
 
+.stage .portal-type.type-out {
+  color: #ffffff;
+  text-shadow:
+    0 4px 0 #cbd5e1,
+    0 8px 18px rgba(12, 49, 97, 0.42),
+    0 18px 36px rgba(1, 168, 207, 0.28);
+}
+
 .portal-type.type-out .type-line-digital {
   color: #01a8cf;
+  background: linear-gradient(90deg, #00b4d8 0%, #ffffff 32%, #ffffff 74%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 6px 14px rgba(12, 49, 97, 0.38));
 }
 
 .portal-type.type-in {
@@ -460,6 +740,186 @@ onUnmounted(() => {
   display: block;
 }
 
+/* ==================== S-CURVE 3D PORTAL STAGE & FLOATING APK ICONS ==================== */
+.s-curve-portal-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: calc(1 - var(--e, 0) * 2.1);
+  transform: scale(calc(1 + var(--e, 0) * 0.35));
+  transition: opacity 60ms linear;
+}
+
+.s-curve-portal-inner {
+  position: relative;
+  width: clamp(300px, 38vw, 540px);
+  height: clamp(340px, 68vh, 620px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.s-curve-ambient-glow {
+  position: absolute;
+  inset: -8%;
+  background: radial-gradient(
+    circle at 52% 48%,
+    rgba(56, 189, 248, 0.28) 0%,
+    rgba(1, 168, 207, 0.14) 42%,
+    rgba(246, 249, 252, 0) 74%
+  );
+  filter: blur(24px);
+  pointer-events: none;
+}
+
+.s-curve-masked-body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  clip-path: url(#ssd-s-curve-portal-mask);
+  -webkit-clip-path: url(#ssd-s-curve-portal-mask);
+  filter: drop-shadow(0 20px 38px rgba(12, 49, 97, 0.25));
+}
+
+.s-curve-vector-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+}
+
+.portal-three-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 2;
+  mix-blend-mode: screen;
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+/* Floating APK Icon Badges along the Right Arc of the S-Curve */
+.s-curve-apk-orbit {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.apk-orbit-badge {
+  position: absolute;
+  width: clamp(44px, 4.2vw, 58px);
+  height: clamp(44px, 4.2vw, 58px);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid rgba(56, 189, 248, 0.35);
+  box-shadow:
+    0 12px 28px -6px rgba(12, 49, 97, 0.18),
+    0 0 18px rgba(1, 168, 207, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px;
+  pointer-events: auto;
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 260ms ease;
+  animation: apk-float-bob 5s ease-in-out infinite alternate;
+}
+
+.apk-orbit-badge:hover {
+  transform: scale(1.12) translateY(-3px);
+  box-shadow:
+    0 16px 32px -6px rgba(12, 49, 97, 0.26),
+    0 0 24px rgba(1, 168, 207, 0.4);
+}
+
+/* Top Callout Speech-Bubble Card matching Reference Image */
+.apk-orbit-badge.is-callout-card {
+  width: clamp(64px, 6.2vw, 86px);
+  height: clamp(56px, 5.4vw, 74px);
+  border-radius: 18px;
+  background: rgba(248, 252, 255, 0.96);
+  border: 1.5px solid rgba(56, 189, 248, 0.45);
+  padding: 9px;
+}
+
+.apk-callout-pointer {
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 13px;
+  height: 13px;
+  background: rgba(248, 252, 255, 0.96);
+  border-right: 1.5px solid rgba(56, 189, 248, 0.45);
+  border-bottom: 1.5px solid rgba(56, 189, 248, 0.45);
+}
+
+.apk-orbit-icon-wrap {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.apk-orbit-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Exact right-hand S-arc coordinates matching Hero banner tampilan baru dengan portal view baru.png */
+.apk-float-1 {
+  top: 7%;
+  right: 8%;
+  animation-delay: 0s;
+}
+
+.apk-float-2 {
+  top: 24%;
+  right: 2%;
+  animation-delay: 0.6s;
+}
+
+.apk-float-3 {
+  top: 39%;
+  right: -5%;
+  animation-delay: 1.2s;
+}
+
+.apk-float-4 {
+  top: 55%;
+  right: -2%;
+  animation-delay: 1.8s;
+}
+
+.apk-float-5 {
+  top: 71%;
+  right: 4%;
+  animation-delay: 2.4s;
+}
+
+@keyframes apk-float-bob {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, -7px, 0);
+  }
+}
+
 /* Aperture media container */
 .media {
   position: absolute;
@@ -469,6 +929,7 @@ onUnmounted(() => {
   background: #0c3161;
   will-change: clip-path;
   clip-path: inset(23% 35% 23% 35% round 130px 24px 24px 24px);
+  opacity: calc(var(--e, 0) * 1.45);
 }
 
 /* Authentic Lower Wing Logo SSD.svg Backdrop in Navy */
@@ -601,7 +1062,7 @@ onUnmounted(() => {
   object-position: top center;
 }
 
-/* Captions — positioned cleanly below the 72px header so zero text overlap occurs */
+/* Captions - positioned cleanly below the 72px header so zero text overlap occurs */
 .caption,
 .hint {
   position: absolute;
@@ -613,7 +1074,7 @@ onUnmounted(() => {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ssd-accent-text, #00758f);
-  z-index: 4;
+  z-index: 6;
   pointer-events: none;
   opacity: calc(1 - var(--e, 0) * 3);
   transition: opacity 60ms linear;
@@ -637,6 +1098,7 @@ onUnmounted(() => {
 
 .hint {
   bottom: clamp(18px, 3vh, 32px);
+  font-weight: 700;
 }
 
 /* Rising Ledge */
@@ -674,14 +1136,14 @@ onUnmounted(() => {
   z-index: 6;
   pointer-events: none;
   display: grid;
-  grid-template-columns: minmax(300px, 1.25fr) minmax(340px, 440px) minmax(300px, 1.25fr);
+  grid-template-columns: minmax(290px, 1.15fr) minmax(360px, 500px) minmax(290px, 1.15fr);
   align-items: center;
   max-width: 1480px;
   width: 100%;
   height: 100%;
   margin: 0 auto;
   padding: 0 clamp(1.25rem, 3vw, 2.5rem);
-  gap: clamp(1rem, 2.5vw, 2.5rem);
+  gap: clamp(1rem, 2.2vw, 2.25rem);
   opacity: calc(1 - var(--e, 0) * 2.6);
   transition: opacity 80ms linear;
 }
@@ -751,26 +1213,56 @@ onUnmounted(() => {
 .hero-benefit-list {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.65rem;
 }
 
 .benefit-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.75rem;
-  border-radius: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 14px;
   font-size: clamp(0.72rem, 0.85vw, 0.8rem);
-  font-weight: 500;
-  background: rgba(12, 49, 97, 0.04);
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.92);
   color: #0c3161;
   border: 1px solid rgba(12, 49, 97, 0.08);
+  box-shadow: 0 8px 24px -6px rgba(12, 49, 97, 0.07);
 }
 
-.benefit-check {
-  color: #01a8cf;
+.benefit-check-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #00b4d8 0%, #0284c7 100%);
+  color: #ffffff;
   font-weight: 800;
-  font-size: 0.85rem;
+  font-size: 0.72rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  box-shadow: 0 3px 8px rgba(1, 168, 207, 0.3);
+}
+
+.benefit-card-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.benefit-text {
+  font-weight: 700;
+  color: #0c3161;
+  line-height: 1.3;
+}
+
+.benefit-subtext {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #46607a;
+  line-height: 1.4;
 }
 
 /* ==================== CYAN BAGAN CARDS (Cyan Box + Navy Text) ==================== */
@@ -984,9 +1476,35 @@ onUnmounted(() => {
 
 /* Responsive Breakpoints */
 @media (max-width: 1023px) {
-  .portal-type {
+  .stage .portal-type {
     top: 44%;
-    font-size: clamp(2.75rem, 11vw, 4.5rem);
+    font-size: clamp(2.35rem, 9.5vw, 3.85rem);
+  }
+
+  .s-curve-portal-stage {
+    align-items: flex-start;
+    padding-top: clamp(11.5rem, 23vh, 15.5rem);
+  }
+
+  .s-curve-portal-inner {
+    width: clamp(240px, 56vw, 340px);
+    height: clamp(230px, 32vh, 320px);
+  }
+
+  .apk-orbit-badge {
+    width: 36px;
+    height: 36px;
+    padding: 5px;
+  }
+
+  .apk-orbit-badge.is-callout-card {
+    width: 48px;
+    height: 42px;
+    padding: 6px;
+  }
+
+  .benefit-subtext {
+    display: none;
   }
 
   .hero-flanks-layer {
@@ -1011,8 +1529,8 @@ onUnmounted(() => {
   .hero-portal-window-slot {
     order: 2;
     flex: 1;
-    min-height: 200px;
-    max-height: 280px;
+    min-height: 190px;
+    max-height: 270px;
     width: 100%;
   }
 
@@ -1063,7 +1581,7 @@ onUnmounted(() => {
   }
 
   .benefit-item {
-    padding: 0.35rem 0.65rem;
+    padding: 0.4rem 0.65rem;
     font-size: clamp(0.68rem, 2.2vw, 0.75rem);
   }
 
@@ -1091,17 +1609,9 @@ onUnmounted(() => {
 
 /* Mobile Duo-Color Knockout Typography Adjustment for SCHOOL SMART DIGITAL */
 @media (max-width: 767px) {
-  .portal-type {
+  .stage .portal-type {
     top: 43%;
-    font-size: clamp(2.55rem, 13vw, 3.8rem);
-  }
-
-  .portal-type.type-out {
-    color: #0c3161;
-  }
-
-  .portal-type.type-out .type-line-digital {
-    color: #01a8cf;
+    font-size: clamp(2.15rem, 11vw, 3.2rem);
   }
 
   .portal-type.type-in {
@@ -1159,7 +1669,8 @@ onUnmounted(() => {
 
   .portal-type,
   .caption,
-  .hint {
+  .hint,
+  .s-curve-portal-stage {
     display: none !important;
   }
 
@@ -1171,6 +1682,7 @@ onUnmounted(() => {
     position: relative !important;
     clip-path: none !important;
     min-height: 50svh;
+    opacity: 1 !important;
   }
 
   .is-scrolly .pan {
@@ -1191,9 +1703,9 @@ onUnmounted(() => {
 @media (scripting: none) {
   .hero-cliff { height: auto !important; min-height: 100svh; }
   .stage { position: relative !important; height: auto !important; min-height: 100svh; overflow: visible !important; }
-  .portal-type, .caption, .hint { display: none !important; }
+  .portal-type, .caption, .hint, .s-curve-portal-stage { display: none !important; }
   .hero-flanks-layer { display: none !important; }
-  .media { position: relative !important; clip-path: none !important; min-height: 50svh; }
+  .media { position: relative !important; clip-path: none !important; min-height: 50svh; opacity: 1 !important; }
   .is-scrolly .pan { animation: none !important; }
   .ledge { position: relative !important; transform: none !important; pointer-events: auto !important; opacity: 1 !important; box-shadow: none; border-top: none; }
 }

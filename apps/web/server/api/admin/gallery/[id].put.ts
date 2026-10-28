@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm'
 import { schema } from '@ssd/db'
 import { useDb } from '../../../utils/db'
 import { requireAdmin } from '../../../utils/auth'
-import { parseMediaUrl, fetchTikTokOembedThumbnail } from '../../../utils/mediaParser'
+import { parseMediaUrl, extractExternalMediaThumbnail } from '../../../utils/mediaParser'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
@@ -25,8 +25,8 @@ export default defineEventHandler(async (event) => {
   const parsed = parseMediaUrl(rawSourceUrl, body.mediaType || body.media_type, rawThumb)
   let finalThumbnailUrl = parsed.autoThumbnailUrl
 
-  if (parsed.mediaType === 'tiktok' && !finalThumbnailUrl) {
-    finalThumbnailUrl = await fetchTikTokOembedThumbnail(rawSourceUrl)
+  if ((parsed.mediaType === 'tiktok' || parsed.mediaType === 'instagram') && !finalThumbnailUrl) {
+    finalThumbnailUrl = await extractExternalMediaThumbnail(rawSourceUrl)
   }
 
   const db = useDb()
