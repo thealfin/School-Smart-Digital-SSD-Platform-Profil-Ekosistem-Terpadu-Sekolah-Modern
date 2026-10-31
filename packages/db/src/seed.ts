@@ -454,54 +454,6 @@ export async function seed(dbInstance?: Db): Promise<void> {
 
   await db.insert(schema.galleries).values(initialGalleries)
 
-  // 10. Seed Initial Client Testimonials (Ensure standard partner reviews exist)
-  const existingTestimonials = await db.select().from(schema.testimonials)
-  const isDummyOnly = existingTestimonials.length === 1 && existingTestimonials[0].name.toLowerCase() === 'test'
-  if (existingTestimonials.length === 0 || isDummyOnly) {
-    if (isDummyOnly) {
-      await db.delete(schema.testimonials)
-    }
-    console.log('  -> Seeding client testimonials...')
-    await db.insert(schema.testimonials).values([
-      {
-        name: 'Drs. H. Ahmad Fauzi, M.Pd',
-        roleTitle: 'Kepala Sekolah',
-        organization: 'SMP IT Nurul Fikri',
-        content: 'Integrasi smart turnstile QR Code dan laporan keuangan SPP di SSD sangat membantu kami. Rekapitulasi absensi siswa dan notifikasi WhatsApp ke orang tua berjalan otomatis tanpa repot rekap manual.',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-        rating: 5,
-        isVerified: true,
-        consentAt: new Date(),
-        isPublished: true,
-        orderIndex: 1,
-      },
-      {
-        name: 'Dr. Ir. H. Muhammad Ridwan',
-        roleTitle: 'Ketua Yayasan',
-        organization: 'Yayasan Pendidikan Darul Hikmah',
-        content: 'Sebagai pengelola yayasan dengan unit TK, SD/MI, SMP/MTS, SMA/SMK/MA, Ekstrakulikuler, dan Boarding School/Asrama, arsitektur satu data SSD adalah jawaban tepat. Pembukuan tiap unit rapi, hak akses terisolasi ketat, dan konsolidasi keuangan yayasan sangat transparan.',
-        avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
-        rating: 5,
-        isVerified: true,
-        consentAt: new Date(),
-        isPublished: true,
-        orderIndex: 2,
-      },
-      {
-        name: 'Siti Rahmawati, S.Pd',
-        roleTitle: 'Wakasek Kesiswaan',
-        organization: 'SMA Al-Azhar',
-        content: 'Pencatatan konseling BK di SSD benar-benar menjaga kerahasiaan siswa. Data poin kedisiplinan dan riwayat konseling terpisah aman dari sistem umum, memberi ketenangan bagi guru dan siswa.',
-        avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
-        rating: 5,
-        isVerified: true,
-        consentAt: new Date(),
-        isPublished: true,
-        orderIndex: 3,
-      },
-    ])
-  }
-
   console.log('✔ Database seed completed successfully!')
 }
 

@@ -163,13 +163,18 @@ function handleConfirmExport(filterStatus: string) {
   window.open(url, '_blank')
 }
 
+const isLoggingOut = ref(false)
+
 async function handleConfirmLogout() {
-  isLogoutModalOpen.value = false
+  if (isLoggingOut.value) return
+  isLoggingOut.value = true
   try {
-    await $fetch('/api/auth/logout', { method: 'POST' })
+    await $fetch('/api/auth/logout', { method: 'POST' }).catch(() => {})
   } finally {
     await clearSession()
-    await router.push('/admin/login')
+    isLogoutModalOpen.value = false
+    isLoggingOut.value = false
+    await navigateTo('/admin/login', { replace: true })
   }
 }
 
@@ -448,7 +453,9 @@ onMounted(() => {
     <AdminLogoutModal
       :is-open="isLogoutModalOpen"
       :user-name="(user as any)?.name"
+      :is-loading="isLoggingOut"
       @close="isLogoutModalOpen = false"
+      @confirm="handleConfirmLogout"
       @confirm-logout="handleConfirmLogout"
     />
 

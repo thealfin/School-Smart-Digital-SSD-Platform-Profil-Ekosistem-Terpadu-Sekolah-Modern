@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { testimonials as fallbackList } from '@ssd/shared/content'
 import type { TestimonialItem } from '@ssd/shared/types'
 
 const props = defineProps<{
@@ -8,17 +7,18 @@ const props = defineProps<{
 }>()
 
 const { data } = await useFetch<{ testimonials: TestimonialItem[] }>('/api/testimonials', {
-  default: () => ({ testimonials: fallbackList }),
+  default: () => ({ testimonials: [] }),
 })
 
 const testimonialList = computed(() => {
   if (props.items && props.items.length > 0) return props.items
-  return data.value?.testimonials?.length ? data.value.testimonials : fallbackList
+  return data.value?.testimonials || []
 })
 </script>
 
 <template>
   <section
+    v-if="testimonialList.length > 0"
     id="testimoni"
     class="py-20 md:py-28 bg-white relative border-t border-slate-200/80 overflow-hidden"
     aria-labelledby="testimonial-heading"

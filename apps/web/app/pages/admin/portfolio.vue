@@ -334,10 +334,19 @@ async function handleDelete(id: string) {
   }
 }
 
+const isLoggingOut = ref(false)
+
 async function handleLogout() {
-  await $fetch('/api/auth/logout', { method: 'POST' }).catch(() => {})
-  await clearSession()
-  router.replace('/admin/login')
+  if (isLoggingOut.value) return
+  isLoggingOut.value = true
+  try {
+    await $fetch('/api/auth/logout', { method: 'POST' }).catch(() => {})
+  } finally {
+    await clearSession()
+    isLogoutModalOpen.value = false
+    isLoggingOut.value = false
+    await navigateTo('/admin/login', { replace: true })
+  }
 }
 </script>
 
@@ -925,7 +934,10 @@ async function handleLogout() {
 
     <AdminLogoutModal
       :is-open="isLogoutModalOpen"
+      :user-name="user?.name"
+      :is-loading="isLoggingOut"
       @confirm="handleLogout"
+      @confirm-logout="handleLogout"
       @close="isLogoutModalOpen = false"
     />
   </div>

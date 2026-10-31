@@ -1,7 +1,6 @@
 import { defineEventHandler, setResponseHeaders } from 'h3'
 import { asc, eq, and } from 'drizzle-orm'
 import { schema } from '@ssd/db'
-import { testimonials as fallbackTestimonials } from '@ssd/shared/content'
 import { getSafeDb } from '../../utils/db'
 
 export default defineEventHandler(async (event) => {
@@ -14,7 +13,7 @@ export default defineEventHandler(async (event) => {
   try {
     const db = getSafeDb()
     if (!db) {
-      return { testimonials: fallbackTestimonials }
+      return { testimonials: [] }
     }
 
     const rows = await db
@@ -23,13 +22,9 @@ export default defineEventHandler(async (event) => {
       .where(and(eq(schema.testimonials.isPublished, true), eq(schema.testimonials.archived, false)))
       .orderBy(asc(schema.testimonials.orderIndex), asc(schema.testimonials.createdAt))
 
-    if (!rows || rows.length === 0) {
-      return { testimonials: fallbackTestimonials }
-    }
-
-    return { testimonials: rows }
+    return { testimonials: rows || [] }
   } catch {
-    return { testimonials: fallbackTestimonials }
+    return { testimonials: [] }
   }
 })
 

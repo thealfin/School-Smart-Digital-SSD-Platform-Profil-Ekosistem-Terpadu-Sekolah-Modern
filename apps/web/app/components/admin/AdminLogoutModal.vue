@@ -2,12 +2,19 @@
 defineProps<{
   isOpen: boolean
   userName?: string
+  isLoading?: boolean
 }>()
 
 const emit = defineEmits<{
   (e: 'close'): void
+  (e: 'confirm'): void
   (e: 'confirmLogout'): void
 }>()
+
+function onConfirm() {
+  emit('confirm')
+  emit('confirmLogout')
+}
 </script>
 
 <template>
@@ -43,17 +50,20 @@ const emit = defineEmits<{
         <div class="flex items-center justify-end gap-2.5 pt-1">
           <button
             type="button"
-            class="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-xs transition"
+            :disabled="isLoading"
+            class="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-100 disabled:opacity-50 text-slate-700 font-semibold text-xs transition"
             @click="emit('close')"
           >
             Batal
           </button>
           <button
             type="button"
-            class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs transition"
-            @click="emit('confirmLogout')"
+            :disabled="isLoading"
+            class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-semibold text-xs transition flex items-center gap-1.5"
+            @click="onConfirm"
           >
-            Ya, Keluar Sesi
+            <span v-if="isLoading" class="material-symbols-rounded text-sm animate-spin">progress_activity</span>
+            <span>{{ isLoading ? 'Memproses...' : 'Ya, Keluar Sesi' }}</span>
           </button>
         </div>
       </div>
